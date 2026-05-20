@@ -29,3 +29,8 @@ connectDB();
 const authRoutes = require('./routes/authRoutes');
 
 app.use('/api/auth', authRoutes);
+
+
+const issueRoutes = require('./routes/issueRoutes');
+
+app.use('/api/issues', issueRoutes);
