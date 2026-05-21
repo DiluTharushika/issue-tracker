@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
 
 /**
  * Professional Issues List Page
  */
 export default function IssuesList() {
+  const navigate = useNavigate();
+
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,6 +18,9 @@ export default function IssuesList() {
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
 
+  const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
+
+  // ✅ Fetch issues
   const fetchIssues = async () => {
     setLoading(true);
     try {
@@ -35,15 +42,13 @@ export default function IssuesList() {
     fetchIssues();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this issue?"
-    );
-
-    if (!confirmDelete) return;
+  // ✅ Confirm Delete
+  const confirmDeleteIssue = async () => {
+    if (!selectedIssueId) return;
 
     try {
-      await issuesApi.deleteIssue(id);
+      await issuesApi.deleteIssue(selectedIssueId);
+      setSelectedIssueId(null);
       fetchIssues();
     } catch (error) {
       console.error("Delete failed", error);
@@ -92,9 +97,7 @@ export default function IssuesList() {
           <option value="Low">Low</option>
         </select>
 
-        <Button onClick={fetchIssues}>
-          Apply
-        </Button>
+        <Button onClick={fetchIssues}>Apply</Button>
       </div>
 
       {/* Table */}
@@ -114,6 +117,7 @@ export default function IssuesList() {
                 <th className="text-right px-4 py-3">Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {issues.map((issue) => (
                 <tr
@@ -136,9 +140,22 @@ export default function IssuesList() {
                     {new Date(issue.createdAt).toLocaleDateString()}
                   </td>
 
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right space-x-4">
+                    {/* ✅ Edit */}
                     <button
-                      onClick={() => handleDelete(issue._id)}
+                      onClick={() =>
+                        navigate(`/issues/${issue._id}/edit`)
+                      }
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      Edit
+                    </button>
+
+                    {/* ✅ Delete */}
+                    <button
+                      onClick={() =>
+                        setSelectedIssueId(issue._id)
+                      }
                       className="text-red-600 hover:underline text-sm"
                     >
                       Delete
@@ -150,6 +167,18 @@ export default function IssuesList() {
           </table>
         )}
       </div>
+
+      {/* ✅ Professional Delete Modal */}
+      <Modal
+        isOpen={!!selectedIssueId}
+        title="Delete Issue"
+        onClose={() => setSelectedIssueId(null)}
+        onConfirm={confirmDeleteIssue}
+        confirmText="Delete"
+      >
+        Are you sure you want to delete this issue?
+        This action cannot be undone.
+      </Modal>
     </div>
   );
 }
