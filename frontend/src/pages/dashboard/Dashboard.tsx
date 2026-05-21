@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
 
+import { FiHash, FiCircle, FiClock, FiCheckCircle } from "react-icons/fi";
+
 import StatCard from "../../components/dashboard/StatCard";
 import StatusDonut from "../../components/dashboard/StatusDonut";
 import HighPriorityIssuesCard from "../../components/dashboard/HighPriorityIssuesCard";
@@ -97,7 +99,6 @@ export default function Dashboard() {
     return { avgResolveHours, resolvedThisWeek, highPriorityCount };
   }, [issues]);
 
-  // ✅ UI-only demo data (no backend needed)
   const assignees = useMemo(() => {
     return [
       { name: "Alex Rivera", percent: 72 },
@@ -127,17 +128,38 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Stats row */}
+      {/* Stats row (with icons) */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <StatCard label="Total Issues" value={counts.total} accent="violet" />
-        <StatCard label="Open" value={counts.open} accent="blue" />
-        <StatCard label="In Progress" value={counts.inProgress} accent="amber" />
-        <StatCard label="Resolved" value={counts.resolved} accent="emerald" />
+        <StatCard
+          label="Total Issues"
+          value={counts.total}
+          accent="violet"
+          icon={<FiHash />}
+        />
+        <StatCard
+          label="Open"
+          value={counts.open}
+          accent="blue"
+          icon={<FiCircle />}
+        />
+        <StatCard
+          label="In Progress"
+          value={counts.inProgress}
+          accent="amber"
+          icon={<FiClock />}
+        />
+        <StatCard
+          label="Resolved"
+          value={counts.resolved}
+          accent="emerald"
+          icon={<FiCheckCircle />}
+        />
         <StatCard
           label="Completion"
           value={`${counts.completion}%`}
           subText="Resolved rate"
           accent="violet"
+          icon={<FiCheckCircle />}
         />
       </div>
 
