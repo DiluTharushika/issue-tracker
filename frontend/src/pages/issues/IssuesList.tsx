@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
 import Badge from "../../components/ui/Badge";
-import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import Toast from "../../components/ui/Toast";
+import { useDebounce } from "../../hooks/useDebounce";
 
 /**
  * Professional Issues List Page
+ * - Debounced search
+ * - Auto filters
+ * - Pagination
+ * - Edit
+ * - Delete modal
+ * - Toast notifications
  */
 
 export default function IssuesList() {
@@ -17,6 +23,8 @@ export default function IssuesList() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
+
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
 
@@ -49,7 +57,7 @@ export default function IssuesList() {
     setLoading(true);
     try {
       const data = await issuesApi.getAll({
-        search,
+        search: debouncedSearch,
         status,
         priority,
         page,
@@ -66,14 +74,14 @@ export default function IssuesList() {
     }
   };
 
+  // ✅ Auto refetch when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, status, priority]);
+
   useEffect(() => {
     fetchIssues();
-  }, [page]);
-
-  const handleApplyFilters = () => {
-    setPage(1);
-    fetchIssues();
-  };
+  }, [page, debouncedSearch, status, priority]);
 
   // ✅ Confirm Delete
   const confirmDeleteIssue = async () => {
@@ -131,8 +139,6 @@ export default function IssuesList() {
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
         </select>
-
-        <Button onClick={handleApplyFilters}>Apply</Button>
       </div>
 
       {/* Table */}
