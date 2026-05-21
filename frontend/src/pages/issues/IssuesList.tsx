@@ -104,14 +104,14 @@ export default function IssuesList() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Issues</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Issues</h1>
         <p className="text-sm text-slate-600">
           Manage and track all issues.
         </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-white p-4 rounded-xl border border-slate-200">
+      <div className="flex flex-wrap gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200">
         <input
           type="text"
           placeholder="Search by title..."
@@ -143,99 +143,97 @@ export default function IssuesList() {
         </select>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        {loading ? (
-          <Spinner />
-        ) : issues.length === 0 ? (
-          <div className="p-6 text-slate-500 text-center">
-            No issues found.
-          </div>
-        ) : (
-          <>
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="text-left px-4 py-3">Title</th>
-                  <th className="text-left px-4 py-3">Priority</th>
-                  <th className="text-left px-4 py-3">Status</th>
-                  <th className="text-left px-4 py-3">Created</th>
-                  <th className="text-right px-4 py-3">Actions</th>
-                </tr>
-              </thead>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors duration-300">
+  {loading ? (
+    <Spinner />
+  ) : issues.length === 0 ? (
+    <div className="p-6 text-slate-500 dark:text-slate-400 text-center">
+      No issues found.
+    </div>
+  ) : (
+    <>
+      <table className="w-full text-sm">
+        <thead className="bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+          <tr>
+            <th className="text-left px-4 py-3">Title</th>
+            <th className="text-left px-4 py-3">Priority</th>
+            <th className="text-left px-4 py-3">Status</th>
+            <th className="text-left px-4 py-3">Created</th>
+            <th className="text-right px-4 py-3">Actions</th>
+          </tr>
+        </thead>
 
-              <tbody>
-                {issues.map((issue) => (
-                  <tr
-                    key={issue._id}
-                    className="border-t hover:bg-slate-50 transition"
-                  >
-                    <td className="px-4 py-3 font-medium text-slate-800">
-                      {issue.title}
-                    </td>
+        <tbody>
+          {issues.map((issue) => (
+            <tr
+              key={issue._id}
+              className="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+            >
+              <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">
+                {issue.title}
+              </td>
 
-                    <td className="px-4 py-3">
-                      <Badge value={issue.priority} />
-                    </td>
+              <td className="px-4 py-3">
+                <Badge value={issue.priority} />
+              </td>
 
-                    <td className="px-4 py-3">
-                      <Badge value={issue.status} />
-                    </td>
+              <td className="px-4 py-3">
+                <Badge value={issue.status} />
+              </td>
 
-                    <td className="px-4 py-3 text-slate-500">
-                      {new Date(issue.createdAt).toLocaleDateString()}
-                    </td>
+              <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
+                {new Date(issue.createdAt).toLocaleDateString()}
+              </td>
 
-                    <td className="px-4 py-3 text-right space-x-4">
-                      <button
-                        onClick={() =>
-                          navigate(`/issues/${issue._id}/edit`)
-                        }
-                        className="text-blue-600 hover:underline text-sm"
-                      >
-                        Edit
-                      </button>
+              <td className="px-4 py-3 text-right space-x-4">
+                <button
+                  onClick={() =>
+                    navigate(`/issues/${issue._id}/edit`)
+                  }
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Edit
+                </button>
 
-                      <button
-                        onClick={() =>
-                          setSelectedIssueId(issue._id)
-                        }
-                        className="text-red-600 hover:underline text-sm"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <button
+                  onClick={() =>
+                    setSelectedIssueId(issue._id)
+                  }
+                  className="text-red-600 hover:underline text-sm"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-            {/* Pagination */}
-            <div className="flex justify-between items-center p-4 border-t">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage((prev) => prev - 1)}
-                className="px-3 py-1 border rounded disabled:opacity-50"
-              >
-                Previous
-              </button>
+      {/* Pagination */}
+      <div className="flex justify-between items-center p-4 border-t border-slate-200 dark:border-slate-700">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+          className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
 
-              <span className="text-sm text-slate-600">
-                Page {page} of {totalPages}
-              </span>
+        <span className="text-sm text-slate-600 dark:text-slate-300">
+          Page {page} of {totalPages}
+        </span>
 
-              <button
-                disabled={page === totalPages}
-                onClick={() => setPage((prev) => prev + 1)}
-                className="px-3 py-1 border rounded disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
-
+    </>
+  )}
+</div>
       {/* Delete Modal */}
       <Modal
         isOpen={!!selectedIssueId}

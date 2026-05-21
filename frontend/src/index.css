@@ -110,3 +110,6 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+html {
+  transition: background-color 0.3s ease;
+}
