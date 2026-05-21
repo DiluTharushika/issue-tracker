@@ -4,14 +4,10 @@ import { issuesApi } from "../../api/issues.api";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
+import Toast from "../../components/ui/Toast";
 
 /**
  * Professional Issues List Page
- * - Search
- * - Filters
- * - Pagination
- * - Edit
- * - Delete (Modal)
  */
 
 export default function IssuesList() {
@@ -30,7 +26,25 @@ export default function IssuesList() {
 
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
 
-  // ✅ Fetch issues with pagination + filters
+  // ✅ Toast state
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [showToast, setShowToast] = useState(false);
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error"
+  ) => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  // ✅ Fetch issues
   const fetchIssues = async () => {
     setLoading(true);
     try {
@@ -46,17 +60,16 @@ export default function IssuesList() {
       setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error("Failed to fetch issues", error);
+      showNotification("Failed to load issues", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Fetch when page changes
   useEffect(() => {
     fetchIssues();
   }, [page]);
 
-  // ✅ Apply filters
   const handleApplyFilters = () => {
     setPage(1);
     fetchIssues();
@@ -69,9 +82,11 @@ export default function IssuesList() {
     try {
       await issuesApi.deleteIssue(selectedIssueId);
       setSelectedIssueId(null);
+      showNotification("Issue deleted successfully", "success");
       fetchIssues();
     } catch (error) {
       console.error("Delete failed", error);
+      showNotification("Failed to delete issue", "error");
     }
   };
 
@@ -185,7 +200,7 @@ export default function IssuesList() {
               </tbody>
             </table>
 
-            {/* ✅ Pagination */}
+            {/* Pagination */}
             <div className="flex justify-between items-center p-4 border-t">
               <button
                 disabled={page === 1}
@@ -211,7 +226,7 @@ export default function IssuesList() {
         )}
       </div>
 
-      {/* ✅ Delete Modal */}
+      {/* Delete Modal */}
       <Modal
         isOpen={!!selectedIssueId}
         title="Delete Issue"
@@ -222,6 +237,13 @@ export default function IssuesList() {
         Are you sure you want to delete this issue?
         This action cannot be undone.
       </Modal>
+
+      {/* Toast */}
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+      />
     </div>
   );
 }
