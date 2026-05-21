@@ -6,6 +6,8 @@ import StatCard from "../../components/dashboard/StatCard";
 import StatusDonut from "../../components/dashboard/StatusDonut";
 import HighPriorityIssuesCard from "../../components/dashboard/HighPriorityIssuesCard";
 import ActivityFeed from "../../components/dashboard/ActivityFeed";
+import IssueInsightsCard from "../../components/dashboard/IssueInsightsCard";
+import AssigneeLoadCard from "../../components/dashboard/AssigneeLoadCard";
 
 export default function Dashboard() {
   const [issues, setIssues] = useState<any[]>([]);
@@ -66,6 +68,43 @@ export default function Dashboard() {
       };
     });
   }, [issues]);
+
+  const insights = useMemo(() => {
+    const now = Date.now();
+    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+    const resolvedIssues = issues.filter((i) => i.status === "Resolved");
+
+    const resolveHours = resolvedIssues
+      .map(
+        (i) =>
+          (new Date(i.updatedAt).getTime() - new Date(i.createdAt).getTime()) /
+          (1000 * 60 * 60)
+      )
+      .filter((h) => isFinite(h) && h >= 0);
+
+    const avgResolveHours =
+      resolveHours.length === 0
+        ? 0
+        : resolveHours.reduce((a, b) => a + b, 0) / resolveHours.length;
+
+    const resolvedThisWeek = resolvedIssues.filter(
+      (i) => new Date(i.updatedAt).getTime() >= weekAgo
+    ).length;
+
+    const highPriorityCount = issues.filter((i) => i.priority === "High").length;
+
+    return { avgResolveHours, resolvedThisWeek, highPriorityCount };
+  }, [issues]);
+
+  // ✅ UI-only demo data (no backend needed)
+  const assignees = useMemo(() => {
+    return [
+      { name: "Alex Rivera", percent: 72 },
+      { name: "Sarah L.", percent: 45 },
+      { name: "Elena R.", percent: 30 },
+    ];
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -129,15 +168,32 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Activity */}
+      {/* Activity + Insights + Assignee Load */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-12">
+        <div className="lg:col-span-8">
           {loading ? (
             <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading activity…
             </div>
           ) : (
             <ActivityFeed items={activityItems} />
+          )}
+        </div>
+
+        <div className="lg:col-span-4 space-y-6">
+          {loading ? (
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
+              Loading insights…
+            </div>
+          ) : (
+            <>
+              <IssueInsightsCard
+                avgResolveHours={insights.avgResolveHours}
+                resolvedThisWeek={insights.resolvedThisWeek}
+                highPriorityCount={insights.highPriorityCount}
+              />
+              <AssigneeLoadCard assignees={assignees} />
+            </>
           )}
         </div>
       </div>
