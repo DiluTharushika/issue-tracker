@@ -8,6 +8,8 @@ export const issuesApi = {
         search?: string;
         status?: string;
         priority?: string;
+        page?: number;
+        limit?: number;
     }) => {
         const res = await api.get("/issues", { params });
         return res.data;
