@@ -1,16 +1,21 @@
+import { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export default function Topbar() {
-  return (
-    <header className="sticky top-0 z-10 h-16 border-b border-slate-200 bg-white">
-      <div className="flex h-full items-center justify-between px-6">
-        <div>
-          <div className="text-sm text-slate-500">IssueTracker Pro</div>
-          <div className="text-base font-semibold text-slate-900">Workspace</div>
-        </div>
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
-        {/* Right side placeholder */}
-        <div className="text-sm text-slate-600">v1.0</div>
+  return (
+    <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6">
+      <div className="font-semibold text-slate-800 dark:text-slate-100">
+        Issue Tracker
       </div>
+
+      <button
+        onClick={toggleTheme}
+        className="px-3 py-1 rounded-md border text-sm dark:border-slate-600"
+      >
+        {theme === "light" ? "🌙 Dark" : "☀️ Light"}
+      </button>
     </header>
   );
 }
