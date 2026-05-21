@@ -17,4 +17,14 @@ export const issuesApi = {
     const res = await api.delete(`/issues/${id}`);
     return res.data;
   },
+  getById: async (id: string) => {
+  const res = await api.get(`/issues/${id}`);
+  return res.data;
+},
+
+updateIssue: async (id: string, payload: any) => {
+  const res = await api.put(`/issues/${id}`, payload);
+  return res.data;
+},
+
 };
