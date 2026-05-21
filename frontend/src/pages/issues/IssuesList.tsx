@@ -4,6 +4,7 @@ import { issuesApi } from "../../api/issues.api";
 import Badge from "../../components/ui/Badge";
 import Modal from "../../components/ui/Modal";
 import Toast from "../../components/ui/Toast";
+import Spinner from "../../components/ui/Spinner";
 import { useDebounce } from "../../hooks/useDebounce";
 
 /**
@@ -74,11 +75,12 @@ export default function IssuesList() {
     }
   };
 
-  // ✅ Auto refetch when filters change
+  // ✅ Reset page when filters change
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, status, priority]);
 
+  // ✅ Fetch data when page or filters change
   useEffect(() => {
     fetchIssues();
   }, [page, debouncedSearch, status, priority]);
@@ -144,9 +146,11 @@ export default function IssuesList() {
       {/* Table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {loading ? (
-          <div className="p-6 text-slate-600">Loading issues...</div>
+          <Spinner />
         ) : issues.length === 0 ? (
-          <div className="p-6 text-slate-500">No issues found.</div>
+          <div className="p-6 text-slate-500 text-center">
+            No issues found.
+          </div>
         ) : (
           <>
             <table className="w-full text-sm">
@@ -164,7 +168,7 @@ export default function IssuesList() {
                 {issues.map((issue) => (
                   <tr
                     key={issue._id}
-                    className="border-t hover:bg-slate-50"
+                    className="border-t hover:bg-slate-50 transition"
                   >
                     <td className="px-4 py-3 font-medium text-slate-800">
                       {issue.title}
