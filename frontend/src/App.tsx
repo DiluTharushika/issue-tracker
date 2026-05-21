@@ -7,7 +7,8 @@ import Register from "./pages/auth/Register";
 import Dashboard from "./pages/dashboard/Dashboard";
 import IssuesList from "./pages/issues/IssuesList";
 import IssueForm from "./pages/issues/IssueForm";
-
+import Analytics from "./pages/analytics/Analytics";
+import Settings from "./pages/settings/Settings";
 import AppLayout from "./components/layout/AppLayout";
 
 /**
@@ -34,8 +35,10 @@ export default function App() {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/issues" element={<IssuesList />} />
-        <Route path="/issues/new" element={<IssueForm mode="create" />} />
-        <Route path="/issues/:id/edit" element={<IssueForm mode="edit" />} />
+        <Route path="/issues/new" element={<IssueForm />} />
+        <Route path="/issues/:id/edit" element={<IssueForm />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       {/* Fallback */}
