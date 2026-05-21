@@ -5,6 +5,7 @@ import { issuesApi } from "../../api/issues.api";
 import StatCard from "../../components/dashboard/StatCard";
 import StatusDonut from "../../components/dashboard/StatusDonut";
 import HighPriorityIssuesCard from "../../components/dashboard/HighPriorityIssuesCard";
+import ActivityFeed from "../../components/dashboard/ActivityFeed";
 
 export default function Dashboard() {
   const [issues, setIssues] = useState<any[]>([]);
@@ -43,6 +44,29 @@ export default function Dashboard() {
       .slice(0, 3);
   }, [issues]);
 
+  const activityItems = useMemo(() => {
+    const sorted = [...issues].sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+
+    return sorted.slice(0, 4).map((issue) => {
+      const createdAt = new Date(issue.createdAt).getTime();
+      const updatedAt = new Date(issue.updatedAt).getTime();
+
+      const action: "Created" | "Updated" =
+        Math.abs(updatedAt - createdAt) < 1000 ? "Created" : "Updated";
+
+      return {
+        id: issue._id,
+        title: issue.title,
+        status: issue.status,
+        priority: issue.priority,
+        action,
+        time: new Date(issue.updatedAt).toLocaleString(),
+      };
+    });
+  }, [issues]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -78,7 +102,7 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Grid like screenshot */}
+      {/* Donut + High Priority */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-4">
           {loading ? (
@@ -101,6 +125,19 @@ export default function Dashboard() {
             </div>
           ) : (
             <HighPriorityIssuesCard issues={highPriority} />
+          )}
+        </div>
+      </div>
+
+      {/* Activity */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-12">
+          {loading ? (
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
+              Loading activity…
+            </div>
+          ) : (
+            <ActivityFeed items={activityItems} />
           )}
         </div>
       </div>
