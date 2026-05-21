@@ -7,15 +7,13 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    {/* AuthProvider makes token available to entire app */}
-    <AuthProvider>
-      {/* BrowserRouter enables route-based pages */}
-      <BrowserRouter>
-        <ThemeProvider>
-        <App />
+   <StrictMode>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </ThemeProvider>
-      </BrowserRouter>
-    </AuthProvider>
+    </BrowserRouter>
   </StrictMode>
 );

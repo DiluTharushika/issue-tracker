@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 
 type Theme = "light" | "dark";
 
@@ -12,25 +13,32 @@ export const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(
-    (localStorage.getItem("theme") as Theme) || "light"
-  );
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("light");
 
+  // ✅ Load saved theme only once
   useEffect(() => {
-    const root = document.documentElement;
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+      setTheme("dark");
+    }
+  }, []);
+
+  // ✅ Always sync DOM class properly
+  useEffect(() => {
+    const html = document.documentElement;
 
     if (theme === "dark") {
-      root.classList.add("dark");
+      html.classList.add("dark");
     } else {
-      root.classList.remove("dark");
+      html.classList.remove("dark");
     }
 
     localStorage.setItem("theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
   };
 
   return (

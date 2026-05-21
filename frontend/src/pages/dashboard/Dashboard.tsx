@@ -8,6 +8,7 @@ import Badge from "../../components/ui/Badge";
  * Dashboard Page
  * - Shows issue status counts
  * - Shows latest 5 issues
+ * - Full dark mode support
  */
 export default function Dashboard() {
   const [issues, setIssues] = useState<any[]>([]);
@@ -30,18 +31,17 @@ export default function Dashboard() {
   }, []);
 
   if (loading) {
-    return <div className="text-slate-600">Loading dashboard...</div>;
+    return <div className="text-slate-600 dark:text-slate-400">Loading dashboard...</div>;
   }
 
-  const openCount = issues.filter(i => i.status === "Open").length;
-  const inProgressCount = issues.filter(i => i.status === "In Progress").length;
-  const resolvedCount = issues.filter(i => i.status === "Resolved").length;
+  const openCount = issues.filter((i) => i.status === "Open").length;
+  const inProgressCount = issues.filter((i) => i.status === "In Progress").length;
+  const resolvedCount = issues.filter((i) => i.status === "Resolved").length;
 
   const recentIssues = [...issues]
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() -
-        new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
     .slice(0, 5);
 
@@ -49,10 +49,10 @@ export default function Dashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
           Dashboard Overview
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Track your issues and priorities.
         </p>
       </div>
@@ -65,36 +65,36 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Issues */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 transition-colors duration-300">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Recent Issues
           </h2>
 
           <Link
             to="/issues"
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
             View All
           </Link>
         </div>
 
         {recentIssues.length === 0 ? (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             No issues found.
           </p>
         ) : (
           <div className="space-y-4">
-            {recentIssues.map(issue => (
+            {recentIssues.map((issue) => (
               <div
                 key={issue._id}
-                className="flex items-center justify-between border-b pb-3 last:border-none"
+                className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 last:border-none"
               >
                 <div>
-                  <div className="font-medium text-slate-800">
+                  <div className="font-medium text-slate-800 dark:text-slate-100">
                     {issue.title}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     {new Date(issue.createdAt).toLocaleDateString()}
                   </div>
                 </div>
