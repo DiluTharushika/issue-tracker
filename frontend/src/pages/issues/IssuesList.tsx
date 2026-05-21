@@ -7,7 +7,13 @@ import Modal from "../../components/ui/Modal";
 
 /**
  * Professional Issues List Page
+ * - Search
+ * - Filters
+ * - Pagination
+ * - Edit
+ * - Delete (Modal)
  */
+
 export default function IssuesList() {
   const navigate = useNavigate();
 
@@ -18,9 +24,13 @@ export default function IssuesList() {
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
+
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
 
-  // ✅ Fetch issues
+  // ✅ Fetch issues with pagination + filters
   const fetchIssues = async () => {
     setLoading(true);
     try {
@@ -28,9 +38,12 @@ export default function IssuesList() {
         search,
         status,
         priority,
+        page,
+        limit,
       });
 
-      setIssues(data.issues || data);
+      setIssues(data.issues);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error("Failed to fetch issues", error);
     } finally {
@@ -38,9 +51,16 @@ export default function IssuesList() {
     }
   };
 
+  // ✅ Fetch when page changes
   useEffect(() => {
     fetchIssues();
-  }, []);
+  }, [page]);
+
+  // ✅ Apply filters
+  const handleApplyFilters = () => {
+    setPage(1);
+    fetchIssues();
+  };
 
   // ✅ Confirm Delete
   const confirmDeleteIssue = async () => {
@@ -97,7 +117,7 @@ export default function IssuesList() {
           <option value="Low">Low</option>
         </select>
 
-        <Button onClick={fetchIssues}>Apply</Button>
+        <Button onClick={handleApplyFilters}>Apply</Button>
       </div>
 
       {/* Table */}
@@ -107,68 +127,91 @@ export default function IssuesList() {
         ) : issues.length === 0 ? (
           <div className="p-6 text-slate-500">No issues found.</div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-slate-600">
-              <tr>
-                <th className="text-left px-4 py-3">Title</th>
-                <th className="text-left px-4 py-3">Priority</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-left px-4 py-3">Created</th>
-                <th className="text-right px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {issues.map((issue) => (
-                <tr
-                  key={issue._id}
-                  className="border-t hover:bg-slate-50"
-                >
-                  <td className="px-4 py-3 font-medium text-slate-800">
-                    {issue.title}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <Badge value={issue.priority} />
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <Badge value={issue.status} />
-                  </td>
-
-                  <td className="px-4 py-3 text-slate-500">
-                    {new Date(issue.createdAt).toLocaleDateString()}
-                  </td>
-
-                  <td className="px-4 py-3 text-right space-x-4">
-                    {/* ✅ Edit */}
-                    <button
-                      onClick={() =>
-                        navigate(`/issues/${issue._id}/edit`)
-                      }
-                      className="text-blue-600 hover:underline text-sm"
-                    >
-                      Edit
-                    </button>
-
-                    {/* ✅ Delete */}
-                    <button
-                      onClick={() =>
-                        setSelectedIssueId(issue._id)
-                      }
-                      className="text-red-600 hover:underline text-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <>
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="text-left px-4 py-3">Title</th>
+                  <th className="text-left px-4 py-3">Priority</th>
+                  <th className="text-left px-4 py-3">Status</th>
+                  <th className="text-left px-4 py-3">Created</th>
+                  <th className="text-right px-4 py-3">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {issues.map((issue) => (
+                  <tr
+                    key={issue._id}
+                    className="border-t hover:bg-slate-50"
+                  >
+                    <td className="px-4 py-3 font-medium text-slate-800">
+                      {issue.title}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <Badge value={issue.priority} />
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <Badge value={issue.status} />
+                    </td>
+
+                    <td className="px-4 py-3 text-slate-500">
+                      {new Date(issue.createdAt).toLocaleDateString()}
+                    </td>
+
+                    <td className="px-4 py-3 text-right space-x-4">
+                      <button
+                        onClick={() =>
+                          navigate(`/issues/${issue._id}/edit`)
+                        }
+                        className="text-blue-600 hover:underline text-sm"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          setSelectedIssueId(issue._id)
+                        }
+                        className="text-red-600 hover:underline text-sm"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* ✅ Pagination */}
+            <div className="flex justify-between items-center p-4 border-t">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-slate-600">
+                Page {page} of {totalPages}
+              </span>
+
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((prev) => prev + 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
 
-      {/* ✅ Professional Delete Modal */}
+      {/* ✅ Delete Modal */}
       <Modal
         isOpen={!!selectedIssueId}
         title="Delete Issue"
