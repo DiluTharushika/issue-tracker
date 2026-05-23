@@ -7,6 +7,8 @@ import Toast from "../../components/ui/Toast";
 import Spinner from "../../components/ui/Spinner";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useAuth } from "../../hooks/useAuth";
+import { FiDownload, FiChevronDown, FiFileText, FiDatabase } from "react-icons/fi";
+
 
 export default function IssuesList() {
   const navigate = useNavigate();
@@ -30,6 +32,10 @@ export default function IssuesList() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [showToast, setShowToast] = useState(false);
+
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
 
   const showNotification = (message: string, type: "success" | "error") => {
     setToastMessage(message);
@@ -82,6 +88,118 @@ export default function IssuesList() {
     }
   };
 
+  useEffect(() => {
+    if (!showExportDropdown) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("#export-dropdown-container")) {
+        setShowExportDropdown(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [showExportDropdown]);
+
+  const handleExport = async (format: "csv" | "json", scope: "all" | "current") => {
+    setExporting(true);
+    try {
+      let exportData: any[] = [];
+      if (scope === "current") {
+        exportData = issues;
+      } else {
+        const data = await issuesApi.getAll({
+          search: debouncedSearch,
+          status,
+          priority,
+          page: 1,
+          limit: 10000,
+        });
+        exportData = data.issues || [];
+      }
+
+      if (format === "json") {
+        const cleanData = exportData.map((issue) => ({
+          id: issue._id,
+          title: issue.title,
+          description: issue.description,
+          priority: issue.priority,
+          status: issue.status,
+          createdBy: issue.createdBy?.fullName || "System",
+          creatorEmail: issue.createdBy?.email || "",
+          createdAt: issue.createdAt,
+          updatedAt: issue.updatedAt,
+        }));
+
+        const jsonString = JSON.stringify(cleanData, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `issues_export_${scope}_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showNotification("JSON Export downloaded successfully", "success");
+      } else {
+        const escapeCSV = (val: any) => {
+          if (val === null || val === undefined) return "";
+          let stringVal = String(val);
+          stringVal = stringVal.replace(/"/g, '""');
+          if (stringVal.includes(",") || stringVal.includes("\n") || stringVal.includes("\r") || stringVal.includes('"')) {
+            return `"${stringVal}"`;
+          }
+          return stringVal;
+        };
+
+        const headers = [
+          "Issue ID",
+          "Title",
+          "Description",
+          "Priority",
+          "Status",
+          "Created By",
+          "Creator Email",
+          "Created At",
+          "Updated At",
+        ];
+
+        const rows = exportData.map((issue) => [
+          issue._id,
+          issue.title,
+          issue.description,
+          issue.priority,
+          issue.status,
+          issue.createdBy?.fullName || "System",
+          issue.createdBy?.email || "",
+          issue.createdAt ? new Date(issue.createdAt).toISOString() : "",
+          issue.updatedAt ? new Date(issue.updatedAt).toISOString() : "",
+        ]);
+
+        const csvContent = [
+          headers.join(","),
+          ...rows.map((row) => row.map(escapeCSV).join(",")),
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `issues_export_${scope}_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showNotification("CSV Export downloaded successfully", "success");
+      }
+    } catch (error) {
+      console.error("Export failed", error);
+      showNotification("Failed to export issues", "error");
+    } finally {
+      setExporting(false);
+      setShowExportDropdown(false);
+    }
+  };
+
+
   // ✅ Shared glass styles (light: blue border, dark: subtle white border)
   const glassCard =
     "rounded-2xl border bg-white/65 dark:bg-slate-800/40 backdrop-blur-xl shadow-sm " +
@@ -91,13 +209,72 @@ export default function IssuesList() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          Issues
-        </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          Manage and track all issues.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Issues
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Manage and track all issues.
+          </p>
+        </div>
+
+        {/* Export Actions */}
+        <div className="relative" id="export-dropdown-container">
+          <button
+            onClick={() => setShowExportDropdown(!showExportDropdown)}
+            disabled={exporting}
+            className="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-blue-200/70 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/80 transition font-semibold text-sm cursor-pointer shadow-sm disabled:opacity-50"
+          >
+            <FiDownload className={`text-base ${exporting ? "animate-bounce" : ""}`} />
+            <span>{exporting ? "Export" : "Export"}</span>
+            <FiChevronDown className={`text-xs transition-transform duration-200 ${showExportDropdown ? "rotate-180" : ""}`} />
+          </button>
+
+          {showExportDropdown && (
+            <div className="absolute right-0 mt-2 w-56 rounded-xl border border-blue-200/70 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-lg ring-1 ring-black/5 z-50 py-1 divide-y divide-slate-100 dark:divide-white/5 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="py-1">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                  Export All Filtered
+                </div>
+                <button
+                  onClick={() => handleExport("csv", "all")}
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <FiFileText className="text-emerald-600 dark:text-emerald-400" />
+                  <span>CSV Spreadsheet</span>
+                </button>
+                <button
+                  onClick={() => handleExport("json", "all")}
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <FiDatabase className="text-blue-600 dark:text-blue-400" />
+                  <span>JSON File</span>
+                </button>
+              </div>
+
+              <div className="py-1">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                  Export Current Page
+                </div>
+                <button
+                  onClick={() => handleExport("csv", "current")}
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <FiFileText className="text-emerald-500/80" />
+                  <span>CSV (Page {page})</span>
+                </button>
+                <button
+                  onClick={() => handleExport("json", "current")}
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <FiDatabase className="text-blue-500/80" />
+                  <span>JSON (Page {page})</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Filters (glassy + blue border in light) */}
