@@ -5,7 +5,7 @@ export default function Topbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
-    <header className="sticky top-0 z-10 h-16 bg-white/90 dark:bg-slate-800/90 backdrop-blur border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6">
+    <header className="sticky top-0 z-10 h-16 bg-white/50 dark:bg-slate-800/90 backdrop-blur-2xl border-b border-white/60 dark:border-slate-700 flex items-center justify-between px-6 shadow-[0_4px_20px_rgba(59,130,246,0.04)]">
       <div className="font-semibold text-slate-800 dark:text-slate-100">
         Issue Tracker
       </div>

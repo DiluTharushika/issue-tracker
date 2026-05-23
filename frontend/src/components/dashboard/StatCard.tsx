@@ -49,7 +49,7 @@ export default function StatCard({
   return (
     <Card 
       className={`relative overflow-hidden p-5 flex flex-col justify-between border-t-4 ${styles.border} ${
-        isSolid ? "bg-blue-600 dark:bg-blue-600 text-white border-none shadow-md" : "bg-white dark:bg-slate-900"
+        isSolid ? "bg-blue-600 dark:bg-blue-600 text-white border-none shadow-md" : "bg-transparent"
       }`}
     >
       <div className="flex items-start justify-between">

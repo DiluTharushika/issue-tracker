@@ -4,7 +4,7 @@ import Topbar from "./Topbar";
 
 export default function AppLayout() {
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:bg-slate-900 dark:bg-none">
       <div className="flex h-full">
         <Sidebar />
 

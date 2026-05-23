@@ -23,7 +23,7 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
   ];
 
   return (
-    <Card className="p-6 h-full flex flex-col bg-white dark:bg-slate-900">
+    <Card className="p-6 h-full flex flex-col bg-transparent">
       <div className="flex items-center justify-between pb-4">
         <h2 className="text-base font-semibold text-slate-900 dark:text-white">Distribution</h2>
       </div>
