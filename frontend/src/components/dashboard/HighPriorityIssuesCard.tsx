@@ -91,6 +91,10 @@ export default function HighPriorityIssuesCard({ issues }: Props) {
                     <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
                     {timeAgo(issue.createdAt)}
                   </span>
+                  <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+                    by {issue.createdBy?.fullName || "System"}
+                  </span>
                 </div>
               </div>
             </motion.div>

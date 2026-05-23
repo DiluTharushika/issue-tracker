@@ -35,7 +35,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const data = await issuesApi.getAll();
+        const data = await issuesApi.getAll({ limit: 100 });
         setIssues(data.issues || data);
       } catch (e) {
         console.error(e);
@@ -81,6 +81,7 @@ export default function Dashboard() {
         title: issue.title,
         action,
         time: new Date(issue.updatedAt).toLocaleDateString(),
+        creatorName: issue.createdBy?.fullName || "System",
       };
     });
   }, [issues]);

@@ -6,9 +6,11 @@ import Modal from "../../components/ui/Modal";
 import Toast from "../../components/ui/Toast";
 import Spinner from "../../components/ui/Spinner";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function IssuesList() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -164,11 +166,12 @@ export default function IssuesList() {
               <table className="w-full min-w-[860px] text-sm table-fixed">
                 <thead className="bg-white/70 dark:bg-white/5 text-slate-700 dark:text-slate-300">
                   <tr className="border-b border-blue-200/70 dark:border-white/10">
-                    <th className="text-left px-4 py-3 w-[44%]">Title</th>
-                    <th className="text-left px-4 py-3 w-[16%]">Priority</th>
-                    <th className="text-left px-4 py-3 w-[18%]">Status</th>
+                    <th className="text-left px-4 py-3 w-[32%]">Title</th>
+                    <th className="text-left px-4 py-3 w-[16%]">Created By</th>
+                    <th className="text-left px-4 py-3 w-[14%]">Priority</th>
+                    <th className="text-left px-4 py-3 w-[14%]">Status</th>
                     <th className="text-left px-4 py-3 w-[12%]">Created</th>
-                    <th className="text-right px-4 py-3 w-[10%] min-w-[140px]">
+                    <th className="text-right px-4 py-3 w-[12%] min-w-[140px]">
                       Actions
                     </th>
                   </tr>
@@ -184,6 +187,10 @@ export default function IssuesList() {
                         <span title={issue.title} className="clamp-2 break-words">
                           {issue.title}
                         </span>
+                      </td>
+
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-300/90 font-medium">
+                        {issue.createdBy?.fullName || "System"}
                       </td>
 
                       <td className="px-4 py-3">
@@ -208,12 +215,22 @@ export default function IssuesList() {
                           >
                             Edit
                           </button>
-                          <button
-                            onClick={() => setSelectedIssueId(issue._id)}
-                            className="font-semibold text-rose-700 hover:text-rose-800 dark:text-rose-400 dark:hover:text-rose-300"
-                          >
-                            Delete
-                          </button>
+                          {issue.createdBy && (
+                            typeof issue.createdBy === 'string'
+                              ? issue.createdBy === user?.id
+                              : issue.createdBy._id === user?.id
+                          ) ? (
+                            <button
+                              onClick={() => setSelectedIssueId(issue._id)}
+                              className="font-semibold text-rose-700 hover:text-rose-800 dark:text-rose-400 dark:hover:text-rose-300"
+                            >
+                              Delete
+                            </button>
+                          ) : (
+                            <span className="text-xs text-slate-400 dark:text-slate-600 italic select-none">
+                              View Only
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>

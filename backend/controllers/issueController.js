@@ -13,7 +13,7 @@ exports.getIssues = async (req, res) => {
     } = req.query;
 
     // Build query
-    const query = { createdBy: req.userId };
+    const query = {};
 
     if (status) query.status = status;
     if (priority) query.priority = priority;
@@ -23,6 +23,7 @@ exports.getIssues = async (req, res) => {
 
     // Execute query with pagination
     const issues = await Issue.find(query)
+      .populate('createdBy', 'fullName email')
       .sort(sort)
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -48,7 +49,7 @@ exports.getIssues = async (req, res) => {
 // Get single issue
 exports.getIssue = async (req, res) => {
   try {
-    const issue = await Issue.findById(req.params.id);
+    const issue = await Issue.findById(req.params.id).populate('createdBy', 'fullName email');
 
     if (!issue) {
       return res.status(404).json({
@@ -138,7 +139,7 @@ exports.updateIssue = async (req, res) => {
 // Delete issue
 exports.deleteIssue = async (req, res) => {
   try {
-    const issue = await Issue.findByIdAndDelete(req.params.id);
+    const issue = await Issue.findById(req.params.id);
 
     if (!issue) {
       return res.status(404).json({
@@ -146,6 +147,16 @@ exports.deleteIssue = async (req, res) => {
         message: 'Issue not found'
       });
     }
+
+    // Restrict deletion to the creator of the issue
+    if (issue.createdBy.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to delete this issue'
+      });
+    }
+
+    await Issue.findByIdAndDelete(req.params.id);
 
     res.json({
       success: true,
@@ -165,11 +176,11 @@ exports.getStats = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const total = await Issue.countDocuments({ createdBy: userId });
-    const open = await Issue.countDocuments({ createdBy: userId, status: 'Open' });
-    const inProgress = await Issue.countDocuments({ createdBy: userId, status: 'In Progress' });
-    const resolved = await Issue.countDocuments({ createdBy: userId, status: 'Resolved' });
-    const closed = await Issue.countDocuments({ createdBy: userId, status: 'Closed' });
+    const total = await Issue.countDocuments({});
+    const open = await Issue.countDocuments({ status: 'Open' });
+    const inProgress = await Issue.countDocuments({ status: 'In Progress' });
+    const resolved = await Issue.countDocuments({ status: 'Resolved' });
+    const closed = await Issue.countDocuments({ status: 'Closed' });
 
     res.json({
       success: true,

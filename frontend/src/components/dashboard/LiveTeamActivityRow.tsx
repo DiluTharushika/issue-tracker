@@ -7,6 +7,7 @@ type ActivityItem = {
   title: string;
   time: string;
   action: "Created" | "Updated";
+  creatorName?: string;
 };
 
 type Props = {
@@ -18,36 +19,29 @@ type ChatMessage = ActivityItem & {
   timestamp: number;
 };
 
-function getFakeUser(id: string) {
-  const users = [
+function getUserAvatarStyle(id: string) {
+  const styles = [
     {
-      name: "Mark T.",
       color: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
       status: "online" as const,
     },
     {
-      name: "Sarah L.",
-      color:
-        "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
+      color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
       status: "online" as const,
     },
     {
-      name: "Elena R.",
-      color:
-        "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
+      color: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
       status: "away" as const,
     },
     {
-      name: "John D.",
-      color:
-        "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+      color: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
       status: "online" as const,
     },
   ];
 
   let sum = 0;
   for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i);
-  return users[sum % users.length];
+  return styles[sum % styles.length];
 }
 
 const messageVariants = {
@@ -154,11 +148,14 @@ export default function LiveTeamActivityRow({ items }: Props) {
         ) : (
           <AnimatePresence initial={false}>
             {feed.map((msg) => {
-              const user = getFakeUser(msg.id);
-              const initials = user.name
+              const userStyle = getUserAvatarStyle(msg.id);
+              const name = msg.creatorName || "System";
+              const initials = name
                 .split(" ")
                 .map((n) => n[0])
-                .join("");
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
 
               return (
                 <motion.div
@@ -172,13 +169,13 @@ export default function LiveTeamActivityRow({ items }: Props) {
                 >
                   <div className="relative shrink-0 mt-0.5">
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] ${user.color}`}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] ${userStyle.color}`}
                     >
                       {initials}
                     </div>
                     <span
                       className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white dark:border-slate-900 ${
-                        user.status === "online"
+                        userStyle.status === "online"
                           ? "bg-emerald-500"
                           : "bg-amber-400"
                       }`}
@@ -188,7 +185,7 @@ export default function LiveTeamActivityRow({ items }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                        {user.name}
+                        {name}
                       </span>
 
                       <span
