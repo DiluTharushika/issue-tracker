@@ -23,3 +23,68 @@ html {
   - We removed prefers-color-scheme because we control dark mode via Tailwind class (html.dark)
   - We removed global h1/h2 styles so Tailwind typography looks consistent like SaaS dashboards
 */
+
+/* ✅ Utilities (Tailwind v4 style) */
+@layer utilities {
+  /* ------------------------------
+     ✅ Glassy Scrollbar Utility
+     Works in Chrome/Edge/Safari + Firefox
+  -------------------------------- */
+  .glassy-scrollbar {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.55) rgba(255, 255, 255, 0.06);
+  }
+
+  /* Chrome/Edge/Safari */
+  .glassy-scrollbar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .glassy-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+
+  .glassy-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    /* glassy gradient thumb (blue -> purple) */
+    background: linear-gradient(
+      180deg,
+      rgba(96, 165, 250, 0.55),
+      rgba(167, 139, 250, 0.45)
+    );
+
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+      0 10px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .glassy-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(96, 165, 250, 0.75),
+      rgba(167, 139, 250, 0.65)
+    );
+  }
+
+  /* ------------------------------
+     ✅ Line clamp helpers (no plugin)
+  -------------------------------- */
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .clamp-1 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+}

@@ -27,17 +27,20 @@ function getFakeUser(id: string) {
     },
     {
       name: "Sarah L.",
-      color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
+      color:
+        "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
       status: "online" as const,
     },
     {
       name: "Elena R.",
-      color: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
+      color:
+        "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
       status: "away" as const,
     },
     {
       name: "John D.",
-      color: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+      color:
+        "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
       status: "online" as const,
     },
   ];
@@ -49,16 +52,8 @@ function getFakeUser(id: string) {
 
 const messageVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.18 },
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: { duration: 0.12 },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.18 } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.12 } },
 };
 
 export default function LiveTeamActivityRow({ items }: Props) {
@@ -70,7 +65,6 @@ export default function LiveTeamActivityRow({ items }: Props) {
 
   const MAX_MESSAGES = 7;
 
-  // seed when items change
   useEffect(() => {
     if (!items || items.length === 0) {
       setFeed([]);
@@ -88,7 +82,6 @@ export default function LiveTeamActivityRow({ items }: Props) {
     indexRef.current = seedCount % items.length;
   }, [items]);
 
-  // push new message periodically (youtube-live-chat style)
   useEffect(() => {
     if (!items || items.length === 0) return;
 
@@ -115,7 +108,6 @@ export default function LiveTeamActivityRow({ items }: Props) {
     return () => clearInterval(t);
   }, [items, paused]);
 
-  // auto-scroll to bottom
   useEffect(() => {
     if (paused) return;
     const el = feedRef.current;
@@ -153,7 +145,7 @@ export default function LiveTeamActivityRow({ items }: Props) {
         ref={feedRef}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
-        className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-1.5"
+        className="glassy-scrollbar flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-1.5"
       >
         {feed.length === 0 ? (
           <div className="text-sm text-slate-500 dark:text-slate-400 px-1 py-2">
