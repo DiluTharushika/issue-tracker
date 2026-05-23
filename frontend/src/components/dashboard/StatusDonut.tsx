@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useNavigate } from "react-router-dom";
 import Card from "../ui/Card";
 
 type Props = {
@@ -14,6 +15,7 @@ const ITEMS = [
 ] as const;
 
 export default function StatusDonut({ open, inProgress, resolved }: Props) {
+  const navigate = useNavigate();
   const total = open + inProgress + resolved;
 
   const data = [
@@ -26,6 +28,12 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
     <Card className="p-6 h-full flex flex-col bg-transparent">
       <div className="flex items-center justify-between pb-4">
         <h2 className="text-base font-semibold text-slate-900 dark:text-white">Distribution</h2>
+        <button
+          onClick={() => navigate("/analytics")}
+          className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          View Analytics &rarr;
+        </button>
       </div>
 
       <div className="relative mt-2 h-[200px] w-full shrink-0">
@@ -37,11 +45,21 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
           <>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={data} innerRadius={60} outerRadius={85} paddingAngle={2} dataKey="value" stroke="none">
+                <Pie 
+                  data={data} 
+                  innerRadius={60} 
+                  outerRadius={85} 
+                  paddingAngle={2} 
+                  dataKey="value" 
+                  stroke="none"
+                  onClick={() => navigate("/analytics")}
+                  className="cursor-pointer focus:outline-none"
+                  style={{ cursor: "pointer" }}
+                >
                   {data.map((entry) => {
                     const color =
                       ITEMS.find((i) => i.key === entry.name)?.color || "#94a3b8";
-                    return <Cell key={entry.name} fill={color} />;
+                    return <Cell key={entry.name} fill={color} className="hover:opacity-90 transition-opacity outline-none" />;
                   })}
                 </Pie>
                 <Tooltip
