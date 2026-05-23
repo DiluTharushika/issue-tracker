@@ -1,15 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
-
+import { motion } from "framer-motion";
 import { FiHash, FiCircle, FiClock, FiCheckCircle } from "react-icons/fi";
 
 import StatCard from "../../components/dashboard/StatCard";
 import StatusDonut from "../../components/dashboard/StatusDonut";
 import HighPriorityIssuesCard from "../../components/dashboard/HighPriorityIssuesCard";
-import ActivityFeed from "../../components/dashboard/ActivityFeed";
-import IssueInsightsCard from "../../components/dashboard/IssueInsightsCard";
-import AssigneeLoadCard from "../../components/dashboard/AssigneeLoadCard";
+import LiveTeamActivityRow from "../../components/dashboard/LiveTeamActivityRow";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
+  },
+};
 
 export default function Dashboard() {
   const [issues, setIssues] = useState<any[]>([]);
@@ -41,14 +58,11 @@ export default function Dashboard() {
   const highPriority = useMemo(() => {
     return issues
       .filter((i) => i.priority === "High")
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3);
   }, [issues]);
 
-  const activityItems = useMemo(() => {
+  const compactActivity = useMemo(() => {
     const sorted = [...issues].sort(
       (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
@@ -63,54 +77,24 @@ export default function Dashboard() {
       return {
         id: issue._id,
         title: issue.title,
-        status: issue.status,
-        priority: issue.priority,
         action,
-        time: new Date(issue.updatedAt).toLocaleString(),
+        time: new Date(issue.updatedAt).toLocaleDateString(),
       };
     });
   }, [issues]);
 
-  const insights = useMemo(() => {
-    const now = Date.now();
-    const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
-
-    const resolvedIssues = issues.filter((i) => i.status === "Resolved");
-
-    const resolveHours = resolvedIssues
-      .map(
-        (i) =>
-          (new Date(i.updatedAt).getTime() - new Date(i.createdAt).getTime()) /
-          (1000 * 60 * 60)
-      )
-      .filter((h) => isFinite(h) && h >= 0);
-
-    const avgResolveHours =
-      resolveHours.length === 0
-        ? 0
-        : resolveHours.reduce((a, b) => a + b, 0) / resolveHours.length;
-
-    const resolvedThisWeek = resolvedIssues.filter(
-      (i) => new Date(i.updatedAt).getTime() >= weekAgo
-    ).length;
-
-    const highPriorityCount = issues.filter((i) => i.priority === "High").length;
-
-    return { avgResolveHours, resolvedThisWeek, highPriorityCount };
-  }, [issues]);
-
-  const assignees = useMemo(() => {
-    return [
-      { name: "Alex Rivera", percent: 72 },
-      { name: "Sarah L.", percent: 45 },
-      { name: "Elena R.", percent: 30 },
-    ];
-  }, []);
-
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="h-full min-h-0 flex flex-col gap-3 relative"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Subtle background glow */}
+      <div className="pointer-events-none absolute -inset-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent blur-3xl z-0" />
+
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <motion.div variants={itemVariants} className="flex items-start justify-between gap-4 relative z-10">
         <div>
           <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
             Dashboard Overview
@@ -126,48 +110,26 @@ export default function Dashboard() {
         >
           + New Issue
         </Link>
-      </div>
+      </motion.div>
 
-      {/* Stats row (with icons) */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {/* Stats row */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 relative z-10">
+        <StatCard label="Total Issues" value={counts.total} accent="blue" icon={<FiHash />} trendText="+12% vs last mo" trendUp={true} />
+        <StatCard label="Open" value={counts.open} accent="red" icon={<FiCircle />} trendText="-5% vs last mo" trendUp={false} />
+        <StatCard label="In Progress" value={counts.inProgress} accent="amber" icon={<FiClock />} trendText="+2% vs last mo" trendUp={true} />
+        <StatCard label="Resolved" value={counts.resolved} accent="emerald" icon={<FiCheckCircle />} trendText="+8% vs last mo" trendUp={true} />
         <StatCard
-          label="Total Issues"
-          value={counts.total}
-          accent="violet"
-          icon={<FiHash />}
-        />
-        <StatCard
-          label="Open"
-          value={counts.open}
-          accent="blue"
-          icon={<FiCircle />}
-        />
-        <StatCard
-          label="In Progress"
-          value={counts.inProgress}
-          accent="amber"
-          icon={<FiClock />}
-        />
-        <StatCard
-          label="Resolved"
-          value={counts.resolved}
-          accent="emerald"
-          icon={<FiCheckCircle />}
-        />
-        <StatCard
-          label="Completion"
+          label="Completion Rate"
           value={`${counts.completion}%`}
-          subText="Resolved rate"
-          accent="violet"
-          icon={<FiCheckCircle />}
+          accent="solid-blue"
         />
-      </div>
+      </motion.div>
 
-      {/* Donut + High Priority */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-4">
+      {/* Middle row uses remaining space */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3 lg:grid-cols-12 flex-1 min-h-0 relative z-10">
+        <div className="lg:col-span-4 min-h-0 h-full flex flex-col">
           {loading ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
+            <div className="h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading distribution…
             </div>
           ) : (
@@ -179,46 +141,27 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-8 min-h-0 h-full flex flex-col">
           {loading ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
+            <div className="h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading high priority…
             </div>
           ) : (
             <HighPriorityIssuesCard issues={highPriority} />
           )}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Activity + Insights + Assignee Load */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-8">
-          {loading ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
-              Loading activity…
-            </div>
-          ) : (
-            <ActivityFeed items={activityItems} />
-          )}
-        </div>
-
-        <div className="lg:col-span-4 space-y-6">
-          {loading ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 text-sm text-slate-600 dark:text-slate-400">
-              Loading insights…
-            </div>
-          ) : (
-            <>
-              <IssueInsightsCard
-                avgResolveHours={insights.avgResolveHours}
-                resolvedThisWeek={insights.resolvedThisWeek}
-                highPriorityCount={insights.highPriorityCount}
-              />
-              <AssigneeLoadCard assignees={assignees} />
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+      {/* Bottom activity */}
+      <motion.div variants={itemVariants} className="shrink-0 relative z-10">
+        {loading ? (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-4 text-sm text-slate-600 dark:text-slate-400">
+            Loading activity…
+          </div>
+        ) : (
+          <LiveTeamActivityRow items={compactActivity} />
+        )}
+      </motion.div>
+    </motion.div>
   );
 }

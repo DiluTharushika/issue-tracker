@@ -13,10 +13,6 @@ type Props = {
   items: ActivityItem[];
 };
 
-/**
- * ActivityFeed
- * Shows recent activity based on issues (created/updated).
- */
 export default function ActivityFeed({ items }: Props) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 transition-colors">
@@ -29,7 +25,8 @@ export default function ActivityFeed({ items }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 space-y-3">
+      {/* ✅ More compact internal scroll */}
+      <div className="mt-4 max-h-[220px] overflow-y-auto pr-2 space-y-2">
         {items.length === 0 ? (
           <div className="text-sm text-slate-600 dark:text-slate-400">
             No activity yet.
@@ -38,7 +35,7 @@ export default function ActivityFeed({ items }: Props) {
           items.map((a) => (
             <div
               key={a.id}
-              className="flex items-start justify-between gap-4 rounded-xl border border-slate-100 dark:border-slate-700 p-4"
+              className="flex items-start justify-between gap-4 rounded-xl border border-slate-100 dark:border-slate-700 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">

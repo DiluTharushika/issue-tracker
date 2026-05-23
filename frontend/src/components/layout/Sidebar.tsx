@@ -39,7 +39,7 @@ export default function Sidebar() {
     ].join(" ");
 
   return (
-    <aside className="sticky top-0 h-screen w-64 border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors">
+    <aside className="h-full w-64 border-r border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 transition-colors duration-300">
       {/* Brand */}
       <div className="px-5 py-5">
         <div className="text-xs font-semibold text-blue-600">Nexus SaaS</div>
