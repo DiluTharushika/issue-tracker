@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useAuth } from "../../hooks/useAuth";
 import { FiSun, FiMoon, FiBell, FiSearch } from "react-icons/fi";
 
 /**
@@ -14,20 +15,9 @@ import { FiSun, FiMoon, FiBell, FiSearch } from "react-icons/fi";
 export default function Topbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
+  const { user } = useAuth();
 
-  const [profileName, setProfileName] = useState("Dilu Tharushika");
-
-  useEffect(() => {
-    const cached = localStorage.getItem("nexus_profile");
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (parsed.fullName) setProfileName(parsed.fullName);
-      } catch (e) {
-        console.error("Failed to parse cached profile for topbar", e);
-      }
-    }
-  }, []);
+  const profileName = user?.fullName || "Developer";
 
   // Dynamic page title and subtitle
   const getPageMeta = () => {

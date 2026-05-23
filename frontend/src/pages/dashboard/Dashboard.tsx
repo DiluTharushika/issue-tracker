@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
+import { useAuth } from "../../hooks/useAuth";
 import { motion } from "framer-motion";
 import { FiHash, FiCircle, FiClock, FiCheckCircle } from "react-icons/fi";
 
@@ -27,6 +28,7 @@ const itemVariants = {
 };
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -102,7 +104,7 @@ export default function Dashboard() {
       >
         <div>
           <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-            Dashboard Overview
+            Welcome back, {user?.fullName || "Developer"} 👋
           </h1>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Track performance and issue progress.

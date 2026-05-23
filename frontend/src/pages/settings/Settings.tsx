@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useAuth } from "../../hooks/useAuth";
+import { authApi } from "../../api/auth.api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUser,
@@ -32,12 +34,13 @@ type ActiveTab = "profile" | "appearance" | "notifications" | "security";
 
 export default function Settings() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>("profile");
 
-  // Profile States (persisted in localStorage)
-  const [fullName, setFullName] = useState("Dilu Tharushika");
-  const [email, setEmail] = useState("dilu@nexus.io");
-  const [role, setRole] = useState("Senior Frontend Engineer");
+  // Profile States (persisted in database)
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [department, setDepartment] = useState("Engineering");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -58,21 +61,18 @@ export default function Settings() {
   const [tokenCopied, setTokenCopied] = useState(false);
   const [apiToken, setApiToken] = useState("nexus_live_8f3a9e1d88b492a8c7e0c4563a4e");
 
-  // Load localStorage variables on component mount
+  // Sync state with user profile context values
   useEffect(() => {
-    const cachedProfile = localStorage.getItem("nexus_profile");
-    if (cachedProfile) {
-      try {
-        const parsed = JSON.parse(cachedProfile);
-        if (parsed.fullName) setFullName(parsed.fullName);
-        if (parsed.email) setEmail(parsed.email);
-        if (parsed.role) setRole(parsed.role);
-        if (parsed.department) setDepartment(parsed.department);
-      } catch (e) {
-        console.error("Failed to parse cached profile", e);
-      }
+    if (user) {
+      setFullName(user.fullName || "");
+      setEmail(user.email || "");
+      setRole(user.role || "");
+      setDepartment(user.department || "Engineering");
     }
+  }, [user]);
 
+  // Load localStorage variables on component mount (for app-wide visuals)
+  useEffect(() => {
     const cachedNotify = localStorage.getItem("nexus_notifications");
     if (cachedNotify) {
       try {
@@ -92,20 +92,24 @@ export default function Settings() {
     }
   }, []);
 
-  // Save profile to localStorage
-  const handleSaveProfile = (e: React.FormEvent) => {
+  // Save profile to database
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingProfile(true);
 
-    setTimeout(() => {
-      localStorage.setItem(
-        "nexus_profile",
-        JSON.stringify({ fullName, email, role, department })
-      );
+    try {
+      const data = await authApi.updateProfile({ fullName, role, department });
+      if (data?.success && data?.user) {
+        updateUser(data.user);
+        setShowSavedToast(true);
+        setTimeout(() => setShowSavedToast(false), 3000);
+      }
+    } catch (error) {
+      console.error("Failed to update profile", error);
+      alert("Error updating profile settings. Please try again.");
+    } finally {
       setIsSavingProfile(false);
-      setShowSavedToast(true);
-      setTimeout(() => setShowSavedToast(false), 3000);
-    }, 800);
+    }
   };
 
   // Toggle notification states
@@ -267,15 +271,14 @@ export default function Settings() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">
-                          Email Address
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase font-semibold">
+                          Email Address (Non-editable)
                         </label>
                         <input
                           type="email"
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full px-4 py-2.5 rounded-xl border border-blue-200/70 dark:border-white/10 bg-white/70 dark:bg-slate-950/20 text-sm text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500/40"
-                          required
+                          disabled
+                          className="w-full px-4 py-2.5 rounded-xl border border-blue-200/70 dark:border-white/10 bg-slate-100 dark:bg-slate-900/50 text-sm text-slate-500 dark:text-slate-400 outline-none cursor-not-allowed opacity-70"
                         />
                       </div>
 

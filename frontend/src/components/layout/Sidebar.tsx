@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect, useState } from "react";
 import {
   FiHome,
   FiTag,
@@ -19,25 +18,11 @@ import {
  * - Profile card at the bottom with user name, role, and avatar
  */
 export default function Sidebar() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const nav = useNavigate();
 
-  // Profile data loaded from localStorage (synced with Settings page)
-  const [profileName, setProfileName] = useState("Dilu Tharushika");
-  const [profileRole, setProfileRole] = useState("Lead Developer");
-
-  useEffect(() => {
-    const cached = localStorage.getItem("nexus_profile");
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (parsed.fullName) setProfileName(parsed.fullName);
-        if (parsed.role) setProfileRole(parsed.role);
-      } catch (e) {
-        console.error("Failed to parse cached profile for sidebar", e);
-      }
-    }
-  }, []);
+  const profileName = user?.fullName || "Developer";
+  const profileRole = user?.role || "Team Member";
 
   const handleLogout = () => {
     logout();

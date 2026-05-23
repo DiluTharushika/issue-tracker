@@ -10,7 +10,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
  */
 export default function Button({ variant = "primary", className = "", ...props }: Props) {
   const base =
-    "inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer duration-200";
 
   const styles: Record<string, string> = {
     primary: "bg-blue-600 text-white hover:bg-blue-700",
