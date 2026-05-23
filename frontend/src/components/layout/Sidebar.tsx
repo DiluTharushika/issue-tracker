@@ -17,7 +17,12 @@ import {
  * - Section grouping with labels
  * - Profile card at the bottom with user name, role, and avatar
  */
-export default function Sidebar() {
+interface Props {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function Sidebar({ isOpen, setIsOpen }: Props) {
   const { logout, user } = useAuth();
   const nav = useNavigate();
 
@@ -25,6 +30,7 @@ export default function Sidebar() {
   const profileRole = user?.role || "Team Member";
 
   const handleLogout = () => {
+    setIsOpen(false);
     logout();
     nav("/login");
   };
@@ -51,7 +57,11 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="relative h-full w-64 flex flex-col border-r border-white/60 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl transition-colors duration-300 shadow-[4px_0_30px_rgba(59,130,246,0.04)]">
+    <aside
+      className={`fixed md:static inset-y-0 left-0 z-40 h-full w-64 flex flex-col border-r border-white/60 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl transition-transform duration-300 shadow-[4px_0_30px_rgba(59,130,246,0.04)] ${
+        isOpen ? "translate-x-0" : "max-md:-translate-x-full"
+      }`}
+    >
       {/* Brand Header */}
       <div className="px-5 pt-6 pb-5 border-b border-slate-200/50 dark:border-slate-700/50">
         <div className="flex items-center gap-3">
@@ -76,7 +86,12 @@ export default function Sidebar() {
           </div>
           <nav className="space-y-0.5">
             {navItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={itemClass}>
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={itemClass}
+                onClick={() => setIsOpen(false)}
+              >
                 {({ isActive }) => (
                   <>
                     <span className={activeBarClass(isActive)} />
@@ -97,6 +112,7 @@ export default function Sidebar() {
           </div>
           <NavLink
             to="/issues/new"
+            onClick={() => setIsOpen(false)}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 px-3 py-2.5 text-sm font-semibold text-white hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
             <FiPlusCircle className="text-base" />
@@ -109,7 +125,10 @@ export default function Sidebar() {
       <div className="border-t border-slate-200/50 dark:border-slate-700/50 p-4 space-y-3">
         {/* Profile Card */}
         <div
-          onClick={() => nav("/settings")}
+          onClick={() => {
+            setIsOpen(false);
+            nav("/settings");
+          }}
           className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/40 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-all cursor-pointer group"
         >
           {/* Avatar */}
@@ -138,5 +157,6 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+
   );
 }

@@ -324,7 +324,7 @@ export default function Analytics() {
 
   return (
     <motion.div
-      className="h-full min-h-0 overflow-y-auto flex flex-col gap-6 relative pr-3 pb-8 glassy-scrollbar"
+      className="h-full min-h-0 overflow-y-auto flex flex-col gap-6 relative pr-2 pb-8 glassy-scrollbar"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

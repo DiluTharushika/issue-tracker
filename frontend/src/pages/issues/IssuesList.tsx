@@ -207,7 +207,7 @@ export default function IssuesList() {
     "dark:border-white/10 dark:ring-0";
 
   return (
-    <div className="space-y-6">
+    <div className="h-full min-h-0 overflow-y-auto glassy-scrollbar pr-2 pb-8 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

@@ -61,7 +61,8 @@ export default function IssueForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="h-full min-h-0 overflow-y-auto glassy-scrollbar pb-8">
+      <div className="max-w-2xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
           {isEditMode ? "Edit Issue" : "Create New Issue"}
@@ -150,5 +151,6 @@ export default function IssueForm() {
         </form>
       </div>
     </div>
-  );
-}
+  </div>
+);
+}

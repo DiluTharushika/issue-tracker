@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
-import { FiSun, FiMoon, FiBell, FiSearch } from "react-icons/fi";
+import { FiSun, FiMoon, FiBell, FiSearch, FiMenu } from "react-icons/fi";
 
 /**
  * Topbar - Premium SaaS navigation bar
@@ -12,7 +12,11 @@ import { FiSun, FiMoon, FiBell, FiSearch } from "react-icons/fi";
  * - Theme toggle
  * - Profile avatar badge
  */
-export default function Topbar() {
+interface Props {
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function Topbar({ setIsOpen }: Props) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
   const { user } = useAuth();
@@ -34,15 +38,25 @@ export default function Topbar() {
 
   return (
     <header className="sticky top-0 z-10 h-16 bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between px-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      {/* Left: Page title */}
-      <div className="min-w-0">
-        <h1 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
-          {pageMeta.title}
-        </h1>
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5">
-          {pageMeta.subtitle}
-        </p>
+      {/* Left: Hamburger menu + Page title */}
+      <div className="flex items-center min-w-0">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 mr-3 rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-white/60 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition md:hidden cursor-pointer shrink-0"
+          title="Open Menu"
+        >
+          <FiMenu className="text-sm" />
+        </button>
+        <div className="min-w-0">
+          <h1 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
+            {pageMeta.title}
+          </h1>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5 hidden sm:block">
+            {pageMeta.subtitle}
+          </p>
+        </div>
       </div>
+
 
       {/* Right: Action controls */}
       <div className="flex items-center gap-2">

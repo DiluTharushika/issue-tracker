@@ -176,7 +176,7 @@ export default function Settings() {
   ] as const;
 
   return (
-    <div className="h-full min-h-0 flex flex-col gap-6 relative pr-3 pb-8 glassy-scrollbar overflow-y-auto">
+    <div className="h-full min-h-0 flex flex-col gap-6 relative pr-2 pb-8 glassy-scrollbar overflow-y-auto">
       {/* Background glow effects */}
       <div className="pointer-events-none fixed inset-0 -z-10 bg-slate-50 dark:bg-transparent" />
       <div className="pointer-events-none fixed -inset-10 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-200/50 via-white/50 to-white dark:from-blue-500/10 dark:via-transparent dark:to-transparent blur-3xl" />

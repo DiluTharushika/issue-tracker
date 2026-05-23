@@ -88,7 +88,7 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      className="h-full min-h-0 flex flex-col gap-3 relative"
+      className="h-full min-h-0 flex flex-col gap-4 relative"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -166,10 +166,10 @@ export default function Dashboard() {
       {/* Main content row — Distribution | High Priority | Live Activity */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 gap-3 lg:grid-cols-12 flex-1 min-h-0 relative z-10"
+        className="grid grid-cols-1 gap-4 lg:grid-cols-12 flex-1 min-h-0 relative z-10"
       >
         {/* Distribution donut — left */}
-        <div className="lg:col-span-3 min-h-0 h-full flex flex-col">
+        <div className="lg:col-span-3 min-h-0 flex flex-col">
           {loading ? (
             <div className="h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading distribution…
@@ -184,7 +184,7 @@ export default function Dashboard() {
         </div>
 
         {/* High Priority — center */}
-        <div className="lg:col-span-6 min-h-0 h-full flex flex-col">
+        <div className="lg:col-span-6 min-h-0 flex flex-col">
           {loading ? (
             <div className="h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading high priority…
@@ -195,7 +195,7 @@ export default function Dashboard() {
         </div>
 
         {/* Live Team Activity — right corner */}
-        <div className="lg:col-span-3 min-h-0 h-full flex flex-col">
+        <div className="lg:col-span-3 min-h-0 flex flex-col">
           {loading ? (
             <div className="h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 p-5 text-sm text-slate-600 dark:text-slate-400">
               Loading activity…
