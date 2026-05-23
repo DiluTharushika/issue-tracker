@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useState, useEffect } from "react";
+import React, { createContext, useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { storage } from "../utils/storage";
 import { authApi } from "../api/auth.api";
 
@@ -25,31 +25,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(storage.getToken());
   const [user, setUser] = useState<AuthUser>(storage.getUser());
 
-  const login = (newToken: string, newUser?: AuthUser) => {
+  // Ref to skip the syncProfile effect right after login (we already have fresh user data)
+  const skipSyncRef = useRef(false);
+
+  const login = useCallback((newToken: string, newUser?: AuthUser) => {
     storage.setToken(newToken);
-    setToken(newToken);
-    if (newUser !== undefined) {
+    if (newUser != null) {
+      // Persist user immediately so Sidebar / Settings see it on first render
       setUser(newUser);
       storage.setUser(newUser);
     }
-  };
+    // Skip the upcoming syncProfile triggered by setToken — we already have the data
+    skipSyncRef.current = true;
+    setToken(newToken);
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     storage.clearToken();
     storage.clearUser();
     setToken(null);
     setUser(null);
-  };
+  }, []);
 
-  const updateUser = (updatedUser: AuthUser) => {
+  const updateUser = useCallback((updatedUser: AuthUser) => {
     if (updatedUser) {
       setUser(updatedUser);
       storage.setUser(updatedUser);
     }
-  };
+  }, []);
 
   // Keep user profile details perfectly synced with the MongoDB database on page load
   useEffect(() => {
+    // If we just came from login(), skip this sync — we already have fresh user data
+    if (skipSyncRef.current) {
+      skipSyncRef.current = false;
+      return;
+    }
+
     const syncProfile = async () => {
       if (token) {
         try {
@@ -69,9 +81,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
     syncProfile();
-  }, [token]);
+  }, [token, logout]);
 
-  const value = useMemo(() => ({ token, user, login, logout, updateUser }), [token, user]);
+  const value = useMemo(
+    () => ({ token, user, login, logout, updateUser }),
+    [token, user, login, logout, updateUser]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
