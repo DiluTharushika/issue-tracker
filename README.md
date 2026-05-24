@@ -332,7 +332,7 @@ Frontend and backend can be deployed using:
 ## Dilu Tharushika
 
 * GitHub: [DiluTharushika GitHub](https://github.com/DiluTharushika?utm_source=chatgpt.com)
-* LinkedIn: [LinkedIn Profile](https://linkedin.com/in/your-profile?utm_source=chatgpt.com)
+* LinkedIn: [LinkedIn Profile](www.linkedin.com/in/dilutharushika)
 
 ---
 
