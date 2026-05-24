@@ -159,33 +159,34 @@ Displays authenticated user information.
 
 ---
 
-# 📸 Screenshots
 
-## 🏠 Dashboard
+## 📸 Screenshots
 
-```md
-frontend/src/screenshots/dashboard.png
-```
-
-## 📊 Analytics Page
-
-```md
-frontend/src/screenshots/analytics.png
-```
-
-## 📝 Issues Page
-
-```md
-frontend/src/screenshots/issues.png
-```
-
-## ⚙️ Settings Page
-
-```md
-frontend/src/screenshots/settings.png
-```
+### 🏠 Dashboard
+<p align="center">
+  <img src="frontend/src/screenshots/dashboard.png" width="900" />
+</p>
 
 ---
+
+### 📊 Analytics Page
+<p align="center">
+  <img src="frontend/src/screenshots/analytics.png" width="900" />
+</p>
+
+---
+
+### 📝 Issues Page
+<p align="center">
+  <img src="frontend/src/screenshots/issues.png" width="900" />
+</p>
+
+---
+
+### ⚙️ Settings Page
+<p align="center">
+  <img src="frontend/src/screenshots/settings.png" width="900" />
+</p>
 
 # 📂 Project Structure
 
