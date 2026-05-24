@@ -1,6 +1,6 @@
 # 🚀 Issue Tracker — Full Stack MERN CRUD Application
 
-A modern and scalable **Issue Tracker Application** built using the **MERN Stack** as an interview assignment project.
+A modern and scalable **Issue Tracker Application** built using the **MERN Stack**  project.
 This application demonstrates real-world software engineering practices including **authentication, CRUD operations, REST APIs, analytics dashboards, protected routes, filtering, responsive UI, and scalable folder architecture**.
 
 Designed with a clean and professional UI using **React, TypeScript, Tailwind CSS, and Framer Motion**.
