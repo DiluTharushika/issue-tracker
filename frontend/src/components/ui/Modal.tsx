@@ -1,9 +1,5 @@
 import type { ReactNode } from "react";
 
-/**
- * Reusable Modal Component
- * Used for confirmations (delete, status change, etc.)
- */
 
 type ModalProps = {
   isOpen: boolean;

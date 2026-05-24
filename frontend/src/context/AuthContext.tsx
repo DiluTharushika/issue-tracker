@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(storage.getToken());
   const [user, setUser] = useState<AuthUser>(storage.getUser());
 
-  // Ref to skip the syncProfile effect right after login (we already have fresh user data)
+  // Ref to skip the syncProfile effect right after login
   const skipSyncRef = useRef(false);
 
   const login = useCallback((newToken: string, newUser?: AuthUser) => {
@@ -35,8 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(newUser);
       storage.setUser(newUser);
     }
-    // Skip the upcoming syncProfile triggered by setToken — we already have the data
-    skipSyncRef.current = true;
+    // Skip the upcoming syncProfile triggered by setToken 
     setToken(newToken);
   }, []);
 
@@ -56,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Keep user profile details perfectly synced with the MongoDB database on page load
   useEffect(() => {
-    // If we just came from login(), skip this sync — we already have fresh user data
+    // If we just came from login(), skip this sync 
     if (skipSyncRef.current) {
       skipSyncRef.current = false;
       return;
@@ -72,8 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (e: any) {
           console.error("Session verification details failed:", e);
-          // Only perform auto-logout on explicit 401/403 credentials denial.
-          // This keeps the user logged in using cached credentials if the network drops or server restarts!
+          
           if (e?.response?.status === 401 || e?.response?.status === 403) {
             logout();
           }

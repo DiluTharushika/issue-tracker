@@ -11,7 +11,6 @@ const app = express();
 
 connectDB();
 
-// ✅ Simple and correct CORS for development
 app.use(cors({
   origin: true,
   credentials: true

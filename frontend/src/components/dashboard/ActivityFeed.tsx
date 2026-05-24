@@ -25,7 +25,7 @@ export default function ActivityFeed({ items }: Props) {
         </div>
       </div>
 
-      {/* ✅ More compact internal scroll */}
+      
       <div className="mt-4 max-h-[220px] overflow-y-auto pr-2 space-y-2">
         {items.length === 0 ? (
           <div className="text-sm text-slate-600 dark:text-slate-400">

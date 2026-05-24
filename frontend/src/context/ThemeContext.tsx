@@ -16,7 +16,7 @@ export const ThemeContext = createContext<ThemeContextType>({
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // ✅ Load saved theme only once
+  //  Load saved theme only once
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "dark") {
@@ -24,7 +24,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // ✅ Always sync DOM class properly
+  // Always sync DOM class properly
   useEffect(() => {
     const html = document.documentElement;
 

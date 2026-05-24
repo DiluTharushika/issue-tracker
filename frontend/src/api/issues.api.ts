@@ -1,8 +1,6 @@
 import api from "./axios";
 
-/**
- * issuesApi handles all issue-related requests
- */
+
 export const issuesApi = {
     getAll: async (params?: {
         search?: string;

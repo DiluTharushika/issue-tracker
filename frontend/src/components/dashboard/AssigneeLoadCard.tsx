@@ -1,6 +1,6 @@
 type Assignee = {
   name: string;
-  percent: number; // 0 - 100
+  percent: number; 
 };
 
 function initials(name: string) {

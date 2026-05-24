@@ -4,14 +4,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
 import { FiSun, FiMoon, FiBell, FiSearch, FiMenu } from "react-icons/fi";
 
-/**
- * Topbar - Premium SaaS navigation bar
- * - Dynamic page title based on route
- * - Search bar
- * - Notification bell
- * - Theme toggle
- * - Profile avatar badge
- */
+
 interface Props {
   setIsOpen: (open: boolean) => void;
 }
@@ -28,7 +21,7 @@ export default function Topbar({ setIsOpen }: Props) {
   const currentSearch = searchParams.get("search") || "";
   const [searchValue, setSearchValue] = useState(currentSearch);
 
-  // Sync search input value with URL parameter changes (e.g., if cleared elsewhere)
+  
   useEffect(() => {
     setSearchValue(currentSearch);
   }, [currentSearch]);

@@ -1,7 +1,3 @@
-/**
- * Reusable Spinner Component
- * Used during loading states
- */
 
 export default function Spinner() {
   return (

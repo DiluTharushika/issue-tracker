@@ -44,7 +44,7 @@ export default function IssuesList() {
   const [showExportDropdown, setShowExportDropdown] = useState(false);
   const [exporting, setExporting] = useState(false);
 
-  // Sync from URL to local state (e.g. when typing in topbar or clicking stat card)
+  // Sync from URL to local state 
   useEffect(() => {
     setSearch(searchParam);
   }, [searchParam]);
@@ -230,7 +230,7 @@ export default function IssuesList() {
   };
 
 
-  // ✅ Shared glass styles (light: blue border, dark: subtle white border)
+  //  Shared glass styles (light: blue border, dark: subtle white border)
   const glassCard =
     "rounded-2xl border bg-white/65 dark:bg-slate-800/40 backdrop-blur-xl shadow-sm " +
     "border-blue-200/70 ring-1 ring-blue-200/60 " +

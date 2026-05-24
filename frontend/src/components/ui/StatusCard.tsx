@@ -1,8 +1,3 @@
-/**
- * StatusCard Component
- * Used in Dashboard to display issue counts with dark mode support.
- */
-
 type StatusCardProps = {
   title: string;
   count: number;

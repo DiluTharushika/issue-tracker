@@ -10,13 +10,7 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 
-/**
- * Sidebar (Premium SaaS style)
- * - Glassmorphism backdrop
- * - Animated active indicator bar
- * - Section grouping with labels
- * - Profile card at the bottom with user name, role, and avatar
- */
+
 interface Props {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;

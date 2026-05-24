@@ -1,7 +1,3 @@
-/**
- * Badge Component
- * Consistent size + Professional colors for Priority and Status
- */
 
 type BadgeProps = {
   value: string;

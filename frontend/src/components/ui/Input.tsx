@@ -5,10 +5,7 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
 };
 
-/**
- * Reusable input with label + error.
- * Reason: consistent styles across Login/Register/Forms.
- */
+
 export default function Input({ label, error, className = "", ...props }: Props) {
   return (
     <div className="space-y-1.5">
