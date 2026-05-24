@@ -52,7 +52,7 @@ export default function StatCard({
     <Card 
       onClick={onClick}
       className={`relative overflow-hidden p-5 flex flex-col justify-between border-t-4 ${styles.border} ${
-        isSolid ? "bg-blue-600 dark:bg-blue-600 text-white border-none shadow-md" : "bg-transparent"
+        isSolid ? "!bg-blue-600 dark:!bg-blue-600 !text-white border-none shadow-md" : "bg-transparent"
       } ${onClick ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200" : ""}`}
     >
       <div className="flex items-start justify-between">
