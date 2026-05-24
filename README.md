@@ -1,131 +1,136 @@
-# 🚀 Issue Tracker Application
+# 🚀 Issue Tracker — Full Stack MERN CRUD Application
 
-A modern full-stack **Issue Tracker Application** built with **React + Vite**, **Express.js**, and **MongoDB/MySQL** that helps teams efficiently manage software issues, bugs, and development workflows.
+A modern and scalable **Issue Tracker Application** built using the **MERN Stack** as an interview assignment project.
+This application demonstrates real-world software engineering practices including **authentication, CRUD operations, REST APIs, analytics dashboards, protected routes, filtering, responsive UI, and scalable folder architecture**.
 
-This project includes secure authentication, advanced issue management, analytics dashboards, live team activity tracking, notifications, dark/light mode support, reusable UI components, and responsive design.
+Designed with a clean and professional UI using **React, TypeScript, Tailwind CSS, and Framer Motion**.
 
 ---
 
-# 📌 Features
+# 🌟 Project Highlights
 
-## ✅ Core Features
+✅ Full Stack MERN Architecture
+✅ JWT Authentication & Protected Routes
+✅ Complete CRUD Functionality
+✅ Analytics Dashboard
+✅ Search, Filter & Pagination
+✅ Responsive Modern UI
+✅ Dark / Light Theme Support
+✅ Reusable Component Architecture
+✅ Production-Level Folder Structure
 
-### 🔐 Authentication & Authorization
+---
+
+# 📌 Assignment Requirements Covered
+
+This project was developed as part of a technical interview assignment.
+
+### Core Functionalities
+
+* Create Issues
+* Read/View Issues
+* Update Issues
+* Delete Issues
+* Authentication System
+* REST API Integration
+* MongoDB Database Integration
+* Issue Status Tracking
+* Search & Filtering
+
+---
+
+# ✨ Features
+
+## 🔐 Authentication System
 
 * User Registration & Login
 * JWT-based Authentication
-* Secure Password Hashing using bcrypt
-* Protected Routes & Middleware
-* Session Persistence
-* Role-based Access Ready Architecture
+* Password Hashing using bcrypt
+* Protected API Routes
+* Persistent User Sessions
 
-### 📝 Issue Management (CRUD)
+---
 
-* Create New Issues
-* Read/View All Issues
-* Update Existing Issues
-* Delete Issues
-* Issue Detail View
-* Mark Issues as:
+## 📝 Issue Management
 
-  * Open
-  * In Progress
-  * Resolved
-  * Closed
+Users can:
 
-### 🎯 Advanced Issue Features
-
-* Issue Priority Levels:
-
-  * Low
-  * Medium
-  * High
-  * Critical
-* Severity Indicators
-* Search Issues by Title/Keyword
-* Filter Issues by:
+* Create new issues
+* Edit issue details
+* Delete issues with confirmation
+* Update issue statuses
+* Search issues by keywords
+* Filter issues by:
 
   * Status
   * Priority
   * Severity
-  * Assigned User
-* Debounced Search Optimization for Better API Performance
-* Pagination Support for Large Datasets
-* Confirmation Modals for Critical Actions
+* Paginate issue lists
+
+### Supported Issue Statuses
+
+* Open
+* In Progress
+* Resolved
+* Closed
 
 ---
 
-# 📊 Analytics Dashboard
+## 📊 Dashboard & Analytics
 
-The application includes a professional analytics section with visual insights for project monitoring.
+The dashboard provides a visual overview of project issues.
 
-### Dashboard Includes:
+### Analytics Includes
 
-* Total Issues Overview
-* Open vs Resolved Issues
-* Priority Distribution Charts
-* Team Productivity Metrics
-* Status-Based Statistics
-* Real-Time Summary Cards
-* Progress Tracking Components
-
-### Charts & Visualizations
-
-* Pie Charts
-* Bar Charts
-* Activity Graphs
-* Issue Status Analytics
-* Team Performance Insights
+* Total Issues Count
+* Open Issues Count
+* Resolved Issues Count
+* Priority Distribution
+* Status Summary Cards
+* Visual Analytics Components
 
 ---
 
-# 👥 Live Team Activity System
+## 👥 Application Modules
 
-A dedicated activity section provides visibility into team collaboration.
+### 🏠 Dashboard
 
-### Team Activity Features
+Overview of issue statistics and analytics.
 
-* Real-Time Team Activity Feed
-* Recently Updated Issues
-* User Action Tracking
-* Assigned Issue Monitoring
-* Collaborative Workflow Visualization
-* Recent Login & Activity Monitoring
+### 📝 Issues Management
 
----
+Manage and track all issues efficiently.
 
-# 🔔 Notification System
+### 📊 Analytics Page
 
-The application includes a modern notification feature to improve workflow awareness.
+Visual representation of issue trends and distributions.
 
-### Notification Features
+### ⚙️ Settings Page
 
-* Real-Time Notifications
-* Issue Status Update Alerts
-* Assignment Notifications
-* Priority Change Notifications
-* Interactive Notification UI
-* Notification Badge Indicators
+Application preferences and configurations.
+
+### 👤 User Profile Page
+
+Displays authenticated user information.
 
 ---
 
 # 🎨 UI/UX Features
 
-### Modern Interface
+* Fully Responsive Design
+* Modern Dashboard Layout
+* Smooth Page Animations using Framer Motion
+* Clean Sidebar Navigation
+* Reusable UI Components
+* Dark / Light Theme Toggle
+* User-Friendly Experience
 
-* Responsive Design
-* Clean Dashboard Layout
-* Reusable Components
-* Smooth Animations using Framer Motion
-* Professional Sidebar Navigation
-* Interactive Cards & Tables
+---
 
-### Theme Support
+# ⚠️ Known Limitation
 
-* 🌙 Dark Mode
-* ☀️ Light Mode
-* Theme Persistence
-* Custom Theme Context Management
+> 🔔 The notification system UI has been implemented, but real-time backend integration is still pending.
+> Planned implementation will use **Socket.io** for real-time notifications.
 
 ---
 
@@ -133,15 +138,12 @@ The application includes a modern notification feature to improve workflow aware
 
 ## Frontend
 
-* React.js
-* Vite.js
+* React.js (Vite)
 * TypeScript
 * Tailwind CSS
-* Framer Motion
 * Axios
 * React Router DOM
-* React Icons
-* Context API / Zustand (Optional State Management)
+* Framer Motion
 
 ## Backend
 
@@ -149,13 +151,39 @@ The application includes a modern notification feature to improve workflow aware
 * Express.js
 * JWT Authentication
 * bcrypt.js
-* REST API Architecture
 
 ## Database
 
-* MongoDB + Mongoose
+* MongoDB
+* Mongoose ODM
 
-> MySQL support can also be integrated depending on project requirements.
+---
+
+# 📸 Screenshots
+
+## 🏠 Dashboard
+
+```md
+frontend/src/screenshots/dashboard.png
+```
+
+## 📊 Analytics Page
+
+```md
+frontend/src/screenshots/analytics.png
+```
+
+## 📝 Issues Page
+
+```md
+frontend/src/screenshots/issues.png
+```
+
+## ⚙️ Settings Page
+
+```md
+frontend/src/screenshots/settings.png
+```
 
 ---
 
@@ -165,44 +193,36 @@ The application includes a modern notification feature to improve workflow aware
 issue-tracker/
 │
 ├── backend/
-│   ├── config/
 │   ├── controllers/
 │   ├── middleware/
 │   ├── models/
 │   ├── routes/
-│   ├── .env
-│   ├── package.json
+│   ├── utils/
 │   └── server.js
 │
 ├── frontend/
-│   ├── public/
 │   ├── src/
 │   │   ├── api/
 │   │   ├── components/
 │   │   ├── context/
 │   │   ├── hooks/
-│   │   ├── layouts/
 │   │   ├── pages/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── types/
-│   │   └── utils/
-│   │
-│   ├── .env
-│   ├── package.json
-│   └── vite.config.ts
+│   │   ├── utils/
+│   │   └── App.tsx
 │
-└── README.md
+├── screenshots/
+├── README.md
+└── package.json
 ```
 
 ---
 
 # ⚙️ Installation & Setup
 
-## 1️⃣ Clone Repository
+## 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/issue-tracker.git
+git clone https://github.com/DiluTharushika/issue-tracker.git
 cd issue-tracker
 ```
 
@@ -210,16 +230,16 @@ cd issue-tracker
 
 # 🔧 Backend Setup
 
-## Install Backend Dependencies
+## Install Dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-## Configure Environment Variables
+## Create Environment Variables
 
-Create a `.env` file inside the `backend` folder:
+Create a `.env` file inside the backend folder:
 
 ```env
 PORT=5000
@@ -233,17 +253,11 @@ JWT_SECRET=your_secret_key
 npm run dev
 ```
 
-Server will run on:
-
-```bash
-http://localhost:5000
-```
-
 ---
 
 # 💻 Frontend Setup
 
-## Install Frontend Dependencies
+## Install Dependencies
 
 ```bash
 cd frontend
@@ -256,153 +270,71 @@ npm install
 npm run dev
 ```
 
-Frontend will run on:
-
-```bash
-http://localhost:5173
-```
-
----
-
-# 🔑 API Features
-
-## Authentication APIs
-
-* Register User
-* Login User
-* Get Authenticated User
-
-## Issue APIs
-
-* Create Issue
-* Get All Issues
-* Get Single Issue
-* Update Issue
-* Delete Issue
-* Search & Filter Issues
-
----
-
-# 📈 Performance Optimizations
-
-* Debounced Search Requests
-* Optimized API Calls
-* Reusable Components Architecture
-* Lazy Loading Ready Structure
-* Efficient State Management
-* Pagination for Better Scalability
-
 ---
 
 # 📤 Export Features
 
-The application supports exporting issue data.
+The application supports:
 
-### Supported Formats
-
-* CSV Export
-* JSON Export
+* Export Issues as CSV
+* Export Issues as JSON
 
 ---
 
 # 🔒 Security Features
 
-* Password Hashing with bcrypt
 * JWT Authentication
+* Password Hashing using bcrypt
 * Protected API Routes
 * Input Validation
-* Error Handling Middleware
-* Environment Variable Protection
+* Secure Environment Variables
 
 ---
 
-# 🌐 Deployment
+# 🔮 Future Improvements
 
-This application can be deployed using:
+* 🔔 Real-time Notifications (Socket.io)
+* 💬 Comments & Discussion System
+* 📎 File Upload Support
+* 🧑‍💼 Role-Based Access Control (RBAC)
+* 📊 Advanced Analytics Dashboard
+* 📱 Mobile Application Version
+* 📧 Email Notifications
 
-## Frontend Deployment
+---
+
+# 🧪 API Features
+
+RESTful APIs implemented for:
+
+* Authentication
+* User Management
+* Issue Management
+* Dashboard Analytics
+
+---
+
+# 🚀 Deployment
+
+Frontend and backend can be deployed using:
 
 * Vercel
 * Netlify
-
-## Backend Deployment
-
 * Render
 * Railway
-* AWS
-* DigitalOcean
-
----
-
-# 📷 Application Modules
-
-## Included Pages
-
-* Authentication Pages
-* Dashboard
-* Issue Management
-* Analytics Page
-* Team Activity Section
-* Notifications Center
-* Settings Page
-* User Profile
-
----
-
-# 🧪 Future Improvements
-
-* Real-Time Socket.IO Integration
-* Email Notifications
-* Role-Based Access Control
-* Drag & Drop Kanban Board
-* File Upload Support
-* Comments & Discussions
-* Multi-Project Support
-* Mobile App Version
-
----
-
-# 📚 Learning Highlights
-
-This project demonstrates:
-
-* Full-Stack Development Skills
-* REST API Design
-* Authentication & Security
-* State Management
-* Responsive UI/UX Design
-* Data Visualization
-* CRUD Operations
-* Scalable Folder Architecture
-* Team Collaboration Features
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a new branch
-3. Commit your changes
-4. Push the branch
-5. Open a Pull Request
-
----
-
-# 📄 License
-
-This project is licensed under the MIT License.
+* MongoDB Atlas
 
 ---
 
 # 👨‍💻 Author
 
-Developed by **Dilu Tharushika**
+## Dilu Tharushika
 
-* GitHub: [https://github.com/your-username](https://github.com/your-username)
-* LinkedIn: [https://linkedin.com/in/your-profile](https://linkedin.com/in/your-profile)
+* GitHub: [DiluTharushika GitHub](https://github.com/DiluTharushika?utm_source=chatgpt.com)
+* LinkedIn: [LinkedIn Profile](https://linkedin.com/in/your-profile?utm_source=chatgpt.com)
 
 ---
 
+# 📄 License
 
+This project was created for educational and interview assignment purposes.
