@@ -63,7 +63,7 @@ export default function Dashboard() {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )
-      .slice(0, 3);
+      .slice(0, 5);
   }, [issues]);
 
   const compactActivity = useMemo(() => {
@@ -88,7 +88,7 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      className="h-full min-h-0 flex flex-col gap-4 relative"
+      className="h-full min-h-0 flex flex-col gap-4 relative pb-2"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

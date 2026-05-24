@@ -24,43 +24,119 @@ html {
   - We removed global h1/h2 styles so Tailwind typography looks consistent like SaaS dashboards
 */
 
+/* ==============================
+   ✅ Global Glassy Scrollbar
+   Premium frosted-glass scrollbar for the entire app
+   Works in Chrome/Edge/Safari + Firefox
+   ============================== */
+
+/* --- Light mode (global) --- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 130, 191, 0.4) rgba(241, 245, 249, 0.5);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(99, 130, 191, 0.45),
+    rgba(139, 116, 207, 0.35)
+  );
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(99, 130, 191, 0.15);
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(99, 130, 191, 0.65),
+    rgba(139, 116, 207, 0.55)
+  );
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* --- Dark mode (global) --- */
+.dark * {
+  scrollbar-color: rgba(96, 165, 250, 0.45) rgba(15, 23, 42, 0.3);
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(96, 165, 250, 0.5),
+    rgba(167, 139, 250, 0.4)
+  );
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(96, 165, 250, 0.7),
+    rgba(167, 139, 250, 0.6)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
 /* ✅ Utilities (Tailwind v4 style) */
 @layer utilities {
   /* ------------------------------
-     ✅ Glassy Scrollbar Utility
-     Works in Chrome/Edge/Safari + Firefox
+     ✅ Glassy Scrollbar Utility (for targeted emphasis)
+     Extra-prominent variant for feature cards
   -------------------------------- */
   .glassy-scrollbar {
-    /* Firefox */
     scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.55) rgba(255, 255, 255, 0.06);
+    scrollbar-color: rgba(96, 165, 250, 0.55) rgba(255, 255, 255, 0.06);
   }
 
-  /* Chrome/Edge/Safari */
   .glassy-scrollbar::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
   }
 
   .glassy-scrollbar::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.06);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
   }
 
   .glassy-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 999px;
-
-    /* glassy gradient thumb (blue -> purple) */
     background: linear-gradient(
       180deg,
       rgba(96, 165, 250, 0.55),
       rgba(167, 139, 250, 0.45)
     );
-
-    border: 2px solid rgba(255, 255, 255, 0.18);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.18),
-      0 10px 24px rgba(0, 0, 0, 0.25);
+      0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .glassy-scrollbar::-webkit-scrollbar-thumb:hover {

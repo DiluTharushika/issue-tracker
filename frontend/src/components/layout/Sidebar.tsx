@@ -78,7 +78,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
       </div>
 
       {/* Navigation Group */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+      <div className="flex-1 overflow-y-auto glassy-scrollbar px-3 py-4 space-y-5">
         {/* Main section */}
         <div>
           <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 px-3">

@@ -25,8 +25,8 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
   ];
 
   return (
-    <Card className="p-6 h-full flex flex-col bg-transparent">
-      <div className="flex items-center justify-between pb-4">
+    <Card className="p-5 h-full flex flex-col bg-transparent !overflow-visible">
+      <div className="flex items-center justify-between pb-3">
         <h2 className="text-base font-semibold text-slate-900 dark:text-white">Distribution</h2>
         <button
           onClick={() => navigate("/analytics")}
@@ -36,25 +36,27 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
         </button>
       </div>
 
-      <div className="relative mt-2 h-[200px] w-full shrink-0">
+      <div className="relative flex-1 min-h-0 w-full flex items-center justify-center">
         {total === 0 ? (
           <div className="h-full grid place-items-center text-sm font-medium text-slate-500 dark:text-slate-400">
             No data yet
           </div>
         ) : (
-          <>
+          <div className="relative w-full h-full min-h-[140px] max-h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie 
                   data={data} 
-                  innerRadius={60} 
-                  outerRadius={85} 
+                  innerRadius="45%" 
+                  outerRadius="70%" 
                   paddingAngle={2} 
                   dataKey="value" 
                   stroke="none"
                   onClick={() => navigate("/analytics")}
                   className="cursor-pointer focus:outline-none"
                   style={{ cursor: "pointer" }}
+                  cx="50%"
+                  cy="50%"
                 >
                   {data.map((entry) => {
                     const color =
@@ -85,11 +87,11 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
 
-      <div className="mt-8 flex flex-col gap-3">
+      <div className="mt-3 flex flex-col gap-2.5 shrink-0">
         {ITEMS.map((item) => {
           const value =
             item.key === "Open" ? open : item.key === "In Progress" ? inProgress : resolved;
@@ -112,4 +114,4 @@ export default function StatusDonut({ open, inProgress, resolved }: Props) {
       </div>
     </Card>
   );
-}
+}
