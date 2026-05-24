@@ -6,11 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUser,
   FiSliders,
-  FiBell,
   FiLock,
   FiSave,
   FiKey,
-  FiCopy,
   FiCheck,
   FiCamera,
   FiMoon,
@@ -30,7 +28,7 @@ const pageVariants = {
   exit: { opacity: 0, y: -15, transition: { duration: 0.15 } },
 };
 
-type ActiveTab = "profile" | "appearance" | "notifications" | "security";
+type ActiveTab = "profile" | "appearance" | "security";
 
 export default function Settings() {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -45,21 +43,10 @@ export default function Settings() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
 
-  // Notification States
-  const [notifyAssign, setNotifyAssign] = useState(true);
-  const [notifyComments, setNotifyComments] = useState(true);
-  const [notifyWeeklyDigest, setNotifyWeeklyDigest] = useState(false);
-  const [notifySecurity, setNotifySecurity] = useState(true);
-
-  // Appearance Accent Color State
-  const [accentColor, setAccentColor] = useState("blue");
-
   // Security State
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [tokenCopied, setTokenCopied] = useState(false);
-  const [apiToken, setApiToken] = useState("nexus_live_8f3a9e1d88b492a8c7e0c4563a4e");
 
   // Sync state with user profile context values
   useEffect(() => {
@@ -70,27 +57,6 @@ export default function Settings() {
       setDepartment(user.department || "Engineering");
     }
   }, [user]);
-
-  // Load localStorage variables on component mount (for app-wide visuals)
-  useEffect(() => {
-    const cachedNotify = localStorage.getItem("nexus_notifications");
-    if (cachedNotify) {
-      try {
-        const parsed = JSON.parse(cachedNotify);
-        if (parsed.notifyAssign !== undefined) setNotifyAssign(parsed.notifyAssign);
-        if (parsed.notifyComments !== undefined) setNotifyComments(parsed.notifyComments);
-        if (parsed.notifyWeeklyDigest !== undefined) setNotifyWeeklyDigest(parsed.notifyWeeklyDigest);
-        if (parsed.notifySecurity !== undefined) setNotifySecurity(parsed.notifySecurity);
-      } catch (e) {
-        console.error("Failed to parse cached notifications", e);
-      }
-    }
-
-    const cachedAccent = localStorage.getItem("nexus_accent_color");
-    if (cachedAccent) {
-      setAccentColor(cachedAccent);
-    }
-  }, []);
 
   // Save profile to database
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -112,67 +78,11 @@ export default function Settings() {
     }
   };
 
-  // Toggle notification states
-  const toggleNotification = (type: string, currentVal: boolean) => {
-    let updatedAssign = notifyAssign;
-    let updatedComments = notifyComments;
-    let updatedWeekly = notifyWeeklyDigest;
-    let updatedSecurity = notifySecurity;
-
-    if (type === "assign") {
-      setNotifyAssign(!currentVal);
-      updatedAssign = !currentVal;
-    } else if (type === "comments") {
-      setNotifyComments(!currentVal);
-      updatedComments = !currentVal;
-    } else if (type === "weekly") {
-      setNotifyWeeklyDigest(!currentVal);
-      updatedWeekly = !currentVal;
-    } else if (type === "security") {
-      setNotifySecurity(!currentVal);
-      updatedSecurity = !currentVal;
-    }
-
-    localStorage.setItem(
-      "nexus_notifications",
-      JSON.stringify({
-        notifyAssign: updatedAssign,
-        notifyComments: updatedComments,
-        notifyWeeklyDigest: updatedWeekly,
-        notifySecurity: updatedSecurity,
-      })
-    );
-  };
-
-  // Change Accent Color
-  const handleSelectAccent = (color: string) => {
-    setAccentColor(color);
-    localStorage.setItem("nexus_accent_color", color);
-  };
-
-  // Copy API Token Mock
-  const copyApiToken = () => {
-    navigator.clipboard.writeText(apiToken);
-    setTokenCopied(true);
-    setTimeout(() => setTokenCopied(false), 2000);
-  };
-
-  // Regenerate API Token Mock
-  const regenerateApiToken = () => {
-    const chars = "abcdef0123456789";
-    let newToken = "nexus_live_";
-    for (let i = 0; i < 24; i++) {
-      newToken += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setApiToken(newToken);
-  };
-
   // Navigation tab definitions
   const tabs = [
     { id: "profile", label: "My Profile", icon: <FiUser /> },
     { id: "appearance", label: "Appearance", icon: <FiSliders /> },
-    { id: "notifications", label: "Notifications", icon: <FiBell /> },
-    { id: "security", label: "Security & API", icon: <FiLock /> },
+    { id: "security", label: "Security", icon: <FiLock /> },
   ] as const;
 
   return (
@@ -400,102 +310,6 @@ export default function Settings() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Accent color picker */}
-                    <div className="pt-4 border-t border-blue-200/50 dark:border-slate-700/50">
-                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 uppercase">
-                        SaaS Accent Highlight
-                      </label>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                        Choose your preferred accent hue for tags, active sidebars, and highlights.
-                      </p>
-
-                      <div className="flex items-center gap-3">
-                        {[
-                          { color: "blue", hex: "#2563eb", name: "Classic Blue" },
-                          { color: "emerald", hex: "#10b981", name: "Emerald Mint" },
-                          { color: "indigo", hex: "#6366f1", name: "Royal Indigo" },
-                          { color: "amber", hex: "#f59e0b", name: "Amber Gold" },
-                        ].map((acc) => (
-                          <button
-                            key={acc.color}
-                            type="button"
-                            onClick={() => handleSelectAccent(acc.color)}
-                            className="relative group h-10 w-10 rounded-full cursor-pointer transition-all hover:scale-110 flex items-center justify-center"
-                            style={{ backgroundColor: acc.hex }}
-                            title={acc.name}
-                          >
-                            {accentColor === acc.color && (
-                              <span className="h-4 w-4 rounded-full bg-white text-slate-800 flex items-center justify-center text-[10px] shadow font-bold">
-                                <FiCheck />
-                              </span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              )}
-
-              {/* Notifications Panel */}
-              {activeTab === "notifications" && (
-                <Card className="p-6 md:p-8 bg-transparent">
-                  <div className="border-b border-blue-200/50 dark:border-slate-700/50 pb-5 mb-6">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">Notification Controls</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      Toggle active communication triggers and push alerting preferences.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {[
-                      {
-                        id: "assign",
-                        title: "Issue Assignments",
-                        desc: "Send an email alert when you are assigned to a new backlog card.",
-                        state: notifyAssign,
-                      },
-                      {
-                        id: "comments",
-                        title: "Comment Mentions",
-                        desc: "Notify you if a team member mentions you inside an issue discussion.",
-                        state: notifyComments,
-                      },
-                      {
-                        id: "weekly",
-                        title: "Weekly Performance digest",
-                        desc: "Receive weekly team performance analytics summaries in your email inbox.",
-                        state: notifyWeeklyDigest,
-                      },
-                      {
-                        id: "security",
-                        title: "Security & API Alerts",
-                        desc: "Get instantly alerted on password modifications or API token generation logs.",
-                        state: notifySecurity,
-                      },
-                    ].map((pref) => (
-                      <div
-                        key={pref.id}
-                        className="flex items-center justify-between p-4 rounded-xl border border-blue-200/50 dark:border-slate-700/30 bg-white/40 dark:bg-slate-900/40 hover:bg-white/60 dark:hover:bg-slate-900/60 transition"
-                      >
-                        <div className="max-w-[75%]">
-                          <div className="text-sm font-bold text-slate-900 dark:text-slate-100">{pref.title}</div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{pref.desc}</div>
-                        </div>
-
-                        {/* Custom switch slider */}
-                        <label className="relative inline-flex items-center cursor-pointer select-none">
-                          <input
-                            type="checkbox"
-                            className="sr-only peer"
-                            checked={pref.state}
-                            onChange={() => toggleNotification(pref.id, pref.state)}
-                          />
-                          <div className="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500/30 dark:peer-focus:ring-blue-500/20 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 shadow-sm border border-slate-300/40 dark:border-slate-700/40"></div>
-                        </label>
-                      </div>
-                    ))}
                   </div>
                 </Card>
               )}
@@ -504,7 +318,7 @@ export default function Settings() {
               {activeTab === "security" && (
                 <Card className="p-6 md:p-8 bg-transparent">
                   <div className="border-b border-blue-200/50 dark:border-slate-700/50 pb-5 mb-6">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">Security & API Access</h2>
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">Security </h2>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Manage account credentials and configure system integration tokens.
                     </p>
@@ -550,39 +364,6 @@ export default function Settings() {
                         <Button type="button" className="px-5 py-2 text-xs">
                           Update Credentials
                         </Button>
-                      </div>
-                    </div>
-
-                    {/* Developer integration tokens */}
-                    <div className="pt-6 border-t border-blue-200/50 dark:border-slate-700/50">
-                      <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-1.5">
-                        Developer Access Token
-                      </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                        Use this personal access key to verify backend API connections. Keep it private.
-                      </p>
-
-                      <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-                        <div className="flex-1 flex items-center justify-between px-4 py-2.5 rounded-xl border border-blue-200/70 dark:border-white/10 bg-white/70 dark:bg-slate-950/20 select-none">
-                          <code className="text-xs font-semibold text-slate-800 dark:text-slate-300 font-mono tracking-wide">
-                            {apiToken}
-                          </code>
-                          <button
-                            type="button"
-                            onClick={copyApiToken}
-                            className={`p-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition cursor-pointer shrink-0 ml-3`}
-                            title="Copy Token to Clipboard"
-                          >
-                            {tokenCopied ? <FiCheck className="text-emerald-500" /> : <FiCopy className="text-xs" />}
-                          </button>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={regenerateApiToken}
-                          className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200/70 dark:border-slate-700/50 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer whitespace-nowrap transition"
-                        >
-                          Regenerate Token
-                        </button>
                       </div>
                     </div>
                   </div>
