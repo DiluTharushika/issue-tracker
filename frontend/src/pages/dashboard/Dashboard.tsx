@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { issuesApi } from "../../api/issues.api";
 import { useAuth } from "../../hooks/useAuth";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import StatCard from "../../components/dashboard/StatCard";
 import StatusDonut from "../../components/dashboard/StatusDonut";
 import HighPriorityIssuesCard from "../../components/dashboard/HighPriorityIssuesCard";
 import LiveTeamActivityRow from "../../components/dashboard/LiveTeamActivityRow";
+import IssueDetailsModal from "../../components/ui/IssueDetailsModal";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,8 +30,10 @@ const itemVariants = {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewingIssueId, setViewingIssueId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchIssues = async () => {
@@ -131,6 +134,7 @@ export default function Dashboard() {
           icon={<FiHash />}
           trendText="+12% vs last mo"
           trendUp={true}
+          onClick={() => navigate("/issues")}
         />
         <StatCard
           label="Open"
@@ -139,6 +143,7 @@ export default function Dashboard() {
           icon={<FiCircle />}
           trendText="-5% vs last mo"
           trendUp={false}
+          onClick={() => navigate("/issues?status=Open")}
         />
         <StatCard
           label="In Progress"
@@ -147,6 +152,7 @@ export default function Dashboard() {
           icon={<FiClock />}
           trendText="+2% vs last mo"
           trendUp={true}
+          onClick={() => navigate("/issues?status=In Progress")}
         />
         <StatCard
           label="Resolved"
@@ -155,11 +161,13 @@ export default function Dashboard() {
           icon={<FiCheckCircle />}
           trendText="+8% vs last mo"
           trendUp={true}
+          onClick={() => navigate("/issues?status=Resolved")}
         />
         <StatCard
           label="Completion Rate"
           value={`${counts.completion}%`}
           accent="solid-blue"
+          onClick={() => navigate("/analytics")}
         />
       </motion.div>
 
@@ -190,7 +198,10 @@ export default function Dashboard() {
               Loading high priority…
             </div>
           ) : (
-            <HighPriorityIssuesCard issues={highPriority} />
+            <HighPriorityIssuesCard
+              issues={highPriority}
+              onIssueClick={setViewingIssueId}
+            />
           )}
         </div>
 
@@ -201,10 +212,24 @@ export default function Dashboard() {
               Loading activity…
             </div>
           ) : (
-            <LiveTeamActivityRow items={compactActivity} />
+            <LiveTeamActivityRow
+              items={compactActivity}
+              onIssueClick={setViewingIssueId}
+            />
           )}
         </div>
       </motion.div>
+
+      {/* Details modal */}
+      <IssueDetailsModal
+        issueId={viewingIssueId}
+        isOpen={!!viewingIssueId}
+        onClose={() => setViewingIssueId(null)}
+        onEdit={(id) => {
+          setViewingIssueId(null);
+          navigate(`/issues/${id}/edit`);
+        }}
+      />
     </motion.div>
   );
 }

@@ -7,27 +7,35 @@ import Toast from "../../components/ui/Toast";
 import Spinner from "../../components/ui/Spinner";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useAuth } from "../../hooks/useAuth";
+import { useSearchParams } from "react-router-dom";
 import { FiDownload, FiChevronDown, FiFileText, FiDatabase } from "react-icons/fi";
+import IssueDetailsModal from "../../components/ui/IssueDetailsModal";
 
 
 export default function IssuesList() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const searchParam = searchParams.get("search") || "";
+  const statusParam = searchParams.get("status") || "";
+  const priorityParam = searchParams.get("priority") || "";
 
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParam);
   const debouncedSearch = useDebounce(search, 400);
 
-  const [status, setStatus] = useState("");
-  const [priority, setPriority] = useState("");
+  const [status, setStatus] = useState(statusParam);
+  const [priority, setPriority] = useState(priorityParam);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
 
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
+  const [viewingIssueId, setViewingIssueId] = useState<string | null>(null);
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
@@ -35,6 +43,28 @@ export default function IssuesList() {
 
   const [showExportDropdown, setShowExportDropdown] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Sync from URL to local state (e.g. when typing in topbar or clicking stat card)
+  useEffect(() => {
+    setSearch(searchParam);
+  }, [searchParam]);
+
+  useEffect(() => {
+    setStatus(statusParam);
+  }, [statusParam]);
+
+  useEffect(() => {
+    setPriority(priorityParam);
+  }, [priorityParam]);
+
+  // Sync from local state to URL search params
+  useEffect(() => {
+    const params: any = {};
+    if (debouncedSearch) params.search = debouncedSearch;
+    if (status) params.status = status;
+    if (priority) params.priority = priority;
+    setSearchParams(params, { replace: true });
+  }, [debouncedSearch, status, priority, setSearchParams]);
 
 
   const showNotification = (message: string, type: "success" | "error") => {
@@ -361,7 +391,11 @@ export default function IssuesList() {
                       className="hover:bg-blue-50/40 dark:hover:bg-white/5 transition"
                     >
                       <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">
-                        <span title={issue.title} className="clamp-2 break-words">
+                        <span
+                          onClick={() => setViewingIssueId(issue._id)}
+                          title="Click to view details"
+                          className="clamp-2 break-words cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        >
                           {issue.title}
                         </span>
                       </td>
@@ -385,7 +419,13 @@ export default function IssuesList() {
                       </td>
 
                       <td className="px-4 py-3">
-                        <div className="flex justify-end gap-4 whitespace-nowrap">
+                        <div className="flex justify-end gap-3 whitespace-nowrap">
+                          <button
+                            onClick={() => setViewingIssueId(issue._id)}
+                            className="font-semibold text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                          >
+                            View
+                          </button>
                           <button
                             onClick={() => navigate(`/issues/${issue._id}/edit`)}
                             className="font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
@@ -453,6 +493,17 @@ export default function IssuesList() {
       >
         Are you sure you want to delete this issue? This action cannot be undone.
       </Modal>
+
+      {/* Issue Details Modal */}
+      <IssueDetailsModal
+        issueId={viewingIssueId}
+        isOpen={!!viewingIssueId}
+        onClose={() => setViewingIssueId(null)}
+        onEdit={(id) => {
+          setViewingIssueId(null);
+          navigate(`/issues/${id}/edit`);
+        }}
+      />
 
       {/* Toast */}
       <Toast message={toastMessage} type={toastType} isVisible={showToast} />

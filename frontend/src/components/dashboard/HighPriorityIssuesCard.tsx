@@ -5,6 +5,7 @@ import Card from "../ui/Card";
 
 type Props = {
   issues: any[];
+  onIssueClick?: (id: string) => void;
 };
 
 const listVariants = {
@@ -43,7 +44,7 @@ function timeAgo(dateString: string) {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-export default function HighPriorityIssuesCard({ issues }: Props) {
+export default function HighPriorityIssuesCard({ issues, onIssueClick }: Props) {
   return (
     <Card className="p-0 h-full flex flex-col bg-transparent overflow-hidden">
       {/* Red accent glow bar at top */}
@@ -110,6 +111,7 @@ export default function HighPriorityIssuesCard({ issues }: Props) {
             <motion.div
               variants={itemVariants}
               key={issue._id}
+              onClick={() => onIssueClick?.(issue._id)}
               className="group flex items-start gap-3.5 p-3 rounded-xl border border-transparent hover:border-red-100 dark:hover:border-red-500/10 hover:bg-red-50/50 dark:hover:bg-red-500/5 transition-all duration-200 cursor-pointer"
             >
               {/* Priority indicator line + icon */}

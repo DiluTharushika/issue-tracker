@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
 import { FiSun, FiMoon, FiBell, FiSearch, FiMenu } from "react-icons/fi";
@@ -19,9 +19,34 @@ interface Props {
 export default function Topbar({ setIsOpen }: Props) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
   const profileName = user?.fullName || "Developer";
+
+  const currentSearch = searchParams.get("search") || "";
+  const [searchValue, setSearchValue] = useState(currentSearch);
+
+  // Sync search input value with URL parameter changes (e.g., if cleared elsewhere)
+  useEffect(() => {
+    setSearchValue(currentSearch);
+  }, [currentSearch]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchValue(val);
+    if (location.pathname !== "/issues") {
+      navigate(`/issues?search=${encodeURIComponent(val)}`);
+    } else {
+      navigate(`/issues?search=${encodeURIComponent(val)}`, { replace: true });
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/issues?search=${encodeURIComponent(searchValue)}`);
+  };
 
   // Dynamic page title and subtitle
   const getPageMeta = () => {
@@ -61,10 +86,16 @@ export default function Topbar({ setIsOpen }: Props) {
       {/* Right: Action controls */}
       <div className="flex items-center gap-2">
         {/* Search */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-slate-50/60 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 text-sm w-48 transition hover:border-slate-300 dark:hover:border-slate-600">
+        <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-slate-50/60 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 text-sm w-56 transition hover:border-slate-300 dark:hover:border-slate-600 focus-within:border-blue-500/60 dark:focus-within:border-slate-600">
           <FiSearch className="text-xs shrink-0" />
-          <span className="text-xs">Search...</span>
-        </div>
+          <input
+            type="text"
+            placeholder="Search issues..."
+            value={searchValue}
+            onChange={handleSearchChange}
+            className="bg-transparent border-none outline-none text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 w-full"
+          />
+        </form>
 
         {/* Notification Bell */}
         <button className="relative p-2 rounded-xl border border-slate-200/60 dark:border-slate-700/40 bg-white/60 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">

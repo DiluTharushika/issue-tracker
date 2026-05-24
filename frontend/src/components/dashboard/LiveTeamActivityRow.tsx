@@ -12,6 +12,7 @@ type ActivityItem = {
 
 type Props = {
   items: ActivityItem[];
+  onIssueClick?: (id: string) => void;
 };
 
 type ChatMessage = ActivityItem & {
@@ -50,7 +51,7 @@ const messageVariants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.12 } },
 };
 
-export default function LiveTeamActivityRow({ items }: Props) {
+export default function LiveTeamActivityRow({ items, onIssueClick }: Props) {
   const [feed, setFeed] = useState<ChatMessage[]>([]);
   const [paused, setPaused] = useState(false);
 
@@ -165,7 +166,8 @@ export default function LiveTeamActivityRow({ items }: Props) {
                   animate="visible"
                   exit="exit"
                   layout
-                  className="flex items-start gap-2 px-2 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  onClick={() => onIssueClick?.(msg.id)}
+                  className="flex items-start gap-2 px-2 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
                 >
                   <div className="relative shrink-0 mt-0.5">
                     <div

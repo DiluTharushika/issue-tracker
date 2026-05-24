@@ -9,6 +9,7 @@ type StatCardProps = {
   icon?: ReactNode;
   trendText?: string;
   trendUp?: boolean;
+  onClick?: () => void;
 };
 
 const accentMap = {
@@ -42,15 +43,17 @@ export default function StatCard({
   icon,
   trendText,
   trendUp = true,
+  onClick,
 }: StatCardProps) {
   const styles = accentMap[accent];
   const isSolid = accent === "solid-blue";
 
   return (
     <Card 
+      onClick={onClick}
       className={`relative overflow-hidden p-5 flex flex-col justify-between border-t-4 ${styles.border} ${
         isSolid ? "bg-blue-600 dark:bg-blue-600 text-white border-none shadow-md" : "bg-transparent"
-      }`}
+      } ${onClick ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200" : ""}`}
     >
       <div className="flex items-start justify-between">
         <div className={`text-sm font-medium ${isSolid ? "text-blue-100" : "text-slate-600 dark:text-slate-400"}`}>
